@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: { params: unknown }) {
             {/* Price */}
             <div className="mb-6">
               <div className="text-3xl font-bold text-gray-900">
-                ${product.price.toFixed(2)}
+                {product.price.toFixed(2)} MAD
               </div>
               <div className="text-sm text-gray-500 mt-1">
                 Free shipping on orders over $100

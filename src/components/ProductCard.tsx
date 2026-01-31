@@ -85,7 +85,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
           <div className="flex items-center justify-between mt-4">
             <div>
               <div className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                ${product.price.toFixed(2)}
+                {product.price.toFixed(2)} MAD
               </div>
             </div>
             
