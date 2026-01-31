@@ -22,7 +22,7 @@ export default function AdminProductForm() {
       // Reset
       formRef.current?.reset();
       setPreviews([]);
-    } catch (err: never) {
+    } catch (err: any) {
       setStatus({
         type: "error",
         message: err?.message || "Something went wrong",
