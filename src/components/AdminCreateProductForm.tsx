@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createProductAction } from "../app/admin/actions";
+import { createProductAction } from "../app/[locale]/admin/actions";
 import Image from "next/image";
 
 export default function  AdminCreateProductForm() {

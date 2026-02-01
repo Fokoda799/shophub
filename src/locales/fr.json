@@ -1,0 +1,136 @@
+{
+  "header": {
+    "cart": {
+      "title": "Votre panier",
+      "item_singular": "article",
+      "item_plural": "articles",
+      "close_aria": "Fermer le panier",
+
+      "free_shipping_at": "Livraison gratuite à partir de {amount}",
+      "to_go": "Plus que {amount}",
+
+      "empty_title": "Votre panier est vide",
+      "empty_desc": "Ajoutez des articles pour commencer",
+      "continue_shopping": "Continuer vos achats",
+
+      "remove_item_aria": "Supprimer l’article",
+      "decrease_qty_aria": "Diminuer la quantité",
+      "increase_qty_aria": "Augmenter la quantité",
+
+      "subtotal": "Sous-total",
+      "shipping": "Livraison",
+      "tax": "Taxe",
+      "total": "Total",
+
+      "shipping_free": "Gratuite",
+
+      "checkout": "Commander",
+      "checkout_coming_soon": "La fonctionnalité de commande arrive bientôt",
+
+      "secure_note": "Paiement sécurisé • Retours gratuits"
+    }
+  },
+  "home": {
+    "hero": {
+      "alt": "Collection en vedette",
+      "badge": "Nouveauté",
+      "headline": "Saisisse l'instant",
+      "subheadline": "Des sacs soigneusement sélectionnés pour les rituels modernes. Découvrez des silhouettes qui semblent sans effort et indéniablement vôtres.",
+      "shop_women": "Boutique Femmes",
+      "new_in": "Nouveautés",
+      "sale": "Soldes",
+      "scroll": "Faites défiler"
+    },
+    "quick_links": {
+      "popular": "Populaire",
+      "categories": ["Sacs fourre-tout", "Bandoulières", "Sacs à main", "Pochettes", "Sacs à dos", "Sacs de voyage"]
+    },
+    "collection": {
+      "title": "Collection en vedette",
+      "items": "articles",
+      "view_all": "Voir tout",
+      "coming_soon": "Bientôt disponible",
+      "launching_soon": "Nouvelle collection bientôt disponible"
+    },
+    "sustainability": {
+      "badge": "Durabilité",
+      "headline": "Fabriqué avec soin",
+      "subheadline": "Chaque sac raconte une histoire d'approvisionnement éthique, de matériaux durables et de design intemporel.",
+      "learn_more": "En savoir plus"
+    },
+    "stats": [
+      { "value": "5K+", "label": "Clients satisfaits" },
+      { "value": "4.9★", "label": "Note moyenne" },
+      { "value": "100%", "label": "Qualité premium" },
+      { "value": "2-3", "label": "Jours de livraison" }
+    ]
+  },
+  "product_card": {
+    "no_image": "Pas d'image",
+    "viewed": "Vu",
+    "add_to_cart": "Ajouter au panier",
+    "added": "Ajouté",
+    "rating": "(4,5)",
+    "currency": "MAD"
+  },
+
+  "product": {
+    "product": {
+      "back": "Retour",
+      "home": "Accueil",
+      "shop": "Boutique",
+      "currency": "MAD",
+      "tax_info": "Taxe incluse. Livraison calculée à la caisse.",
+      "description": "Description",
+      "features": [
+        { "icon": "M5 13l4 4L19 7", "text": "Matériaux de qualité premium" },
+        { "icon": "M5 13l4 4L19 7", "text": "Artisanat expert" },
+        { "icon": "M5 13l4 4L19 7", "text": "Livraison gratuite au-dessus de 500 MAD" },
+        { "icon": "M5 13l4 4L19 7", "text": "Garantie de retour sous 30 jours" }
+      ],
+      "favorite": "Favoris",
+      "share": "Partager",
+      "guarantees": [
+        { "icon": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", "label": "Sécurisé" },
+        { "icon": "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", "label": "Emballage Cadeau" },
+        { "icon": "M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6", "label": "Retours" }
+      ]
+    }
+  },
+
+
+  "footer": {
+    "brand": {
+      "name": "Élégance",
+      "description": "Votre destination pour les sacs et accessoires pour femmes premium, fabriqués avec excellence."
+    },
+    "sections": {
+      "shop": "Boutique",
+      "support": "Support",
+      "follow_us": "Suivez-nous"
+    },
+    "links": {
+      "all_bags": "Tous les sacs",
+      "new_arrivals": "Nouveautés",
+      "bestsellers": "Meilleures ventes",
+      "sale": "Soldes",
+      "contact_us": "Contactez-nous",
+      "shipping_info": "Informations de livraison",
+      "returns_exchanges": "Retours & Échanges",
+      "faq": "FAQ",
+      "privacy_policy": "Politique de confidentialité",
+      "terms_of_service": "Conditions d'utilisation",
+      "cookie_policy": "Politique des cookies"
+    },
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest",
+      "tiktok": "TikTok"
+    },
+    "footer": {
+      "copyright": "© {year} Studio Élégance. Tous droits réservés."
+    }
+  }
+
+}

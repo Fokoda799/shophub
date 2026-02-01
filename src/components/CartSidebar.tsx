@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
-  BadgeCheck,
-  ChevronRight,
   Minus,
   Plus,
   ShieldCheck,
   ShoppingBag,
   X,
+  Trash2,
 } from "lucide-react";
 import { getPublicAppwriteImageUrl } from "../lib/appwrite-client-urls";
 
@@ -23,6 +22,8 @@ type CartItem = {
 };
 
 type CartSidebarProps = {
+  locale: 'en' | 'fr' | 'ar';
+  dict: any;
   isOpen: boolean;
   onClose?: () => void;
   currency?: string;
@@ -30,16 +31,18 @@ type CartSidebarProps = {
   tax?: number;
 };
 
-const FREE_SHIPPING_THRESHOLD = 120;
+const FREE_SHIPPING_THRESHOLD = 500;
 
-const formatMoney = (value: number, currency: string) =>
-  new Intl.NumberFormat("en-US", {
+const formatMoney = (value: number, currency: string, locale: string) =>
+  new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     maximumFractionDigits: 2,
   }).format(value);
 
 const CartSidebar = ({
+  locale,
+  dict,
   isOpen,
   onClose,
   currency = "MAD",
@@ -100,28 +103,38 @@ const CartSidebar = ({
     const updatedItems = items.filter((item) => item.id !== id);
     setItems(updatedItems);
     localStorage.removeItem(`cart_item_${id}`);
+    window.dispatchEvent(new Event("cart:updated"));
   };
 
   const onIncDec = (id: string, delta: number) => {
-    const updatedItems = items.map((item) => {
-      if (item.id === id) {
-        const updatedItem = { ...item, quantity: item.quantity + delta };
-        localStorage.setItem(
-          `cart_item_${id}`,
-          JSON.stringify({
-            productId: updatedItem.id,
-            title: updatedItem.name,
-            price: updatedItem.price,
-            quantity: updatedItem.quantity,
-            imageFileIds: updatedItem.image ? [updatedItem.image] : [],
-          })
-        );
-        return updatedItem;
-      }
-      return item;
-    });
+    const updatedItems = items
+      .map((item) => {
+        if (item.id === id) {
+          const newQuantity = item.quantity + delta;
+          if (newQuantity <= 0) {
+            localStorage.removeItem(`cart_item_${id}`);
+            return null;
+          }
+          const updatedItem = { ...item, quantity: newQuantity };
+          localStorage.setItem(
+            `cart_item_${id}`,
+            JSON.stringify({
+              productId: updatedItem.id,
+              title: updatedItem.name,
+              price: updatedItem.price,
+              quantity: updatedItem.quantity,
+              imageFileIds: updatedItem.image ? [updatedItem.image] : [],
+            })
+          );
+          return updatedItem;
+        }
+        return item;
+      })
+      .filter((item): item is CartItem => item !== null);
+
     setItems(updatedItems);
-  }
+    window.dispatchEvent(new Event("cart:updated"));
+  };
 
   return (
     <div
@@ -131,155 +144,150 @@ const CartSidebar = ({
       aria-hidden={!isOpen}
     >
       <div
-        className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
         onClick={onClose}
       />
 
       <aside
-        className={`absolute right-0 top-0 h-full w-full max-w-105 transform bg-white shadow-2xl transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`absolute top-0 h-full w-full max-w-md bg-white shadow-2xl transition-transform duration-300
+          ${locale === "ar" ? "left-0" : "right-0"}
+          ${
+            isOpen
+              ? "translate-x-0"
+              : locale === "ar"
+              ? "-translate-x-full"
+              : "translate-x-full"
+          }
+        `}
         role="dialog"
         aria-modal="true"
       >
-        <div className="relative flex h-full flex-col overflow-hidden">
-          <div className="absolute -right-24 top-16 h-48 w-48 rounded-full bg-rose-100 blur-3xl" />
-          <div className="absolute -left-24 top-64 h-52 w-52 rounded-full bg-amber-100 blur-3xl" />
 
-          <header className="relative flex shrink-0 items-center justify-between border-b border-rose-100/70 px-6 py-5">
+        <div className="flex h-full flex-col">
+          <header className="flex shrink-0 items-center justify-between border-b border-gray-200 px-6 py-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-gradient-to-br from-rose-600 to-pink-600 p-3 text-white shadow-lg">
-                <ShoppingBag className="h-5 w-5" />
-              </div>
+              <ShoppingBag className="h-6 w-6 text-gray-900" />
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-500">
-                  Your Cart
-                </p>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Shopping Bag
+                <h2 className="text-lg font-black uppercase tracking-tight text-gray-900">
+                  {dict.title}
                 </h2>
+                <p className="text-xs text-gray-500">
+                  {items.length} {items.length === 1 ? dict.item_singular : dict.item_plural}
+                </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="rounded-full border cursor-pointer border-rose-100 bg-white p-2 text-gray-500 transition hover:border-rose-200 hover:text-rose-600"
-              aria-label="Close cart"
+              className="rounded-sm p-2 transition-colors hover:bg-gray-100"
+              aria-label={dict.close_aria}
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 text-gray-900" />
             </button>
           </header>
 
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto">
-            <div className="px-6 pt-6">
-              <div className="rounded-2xl border border-rose-100 bg-rose-50/60 px-4 py-3 text-sm text-rose-700">
-                {remainingForFree === 0 ? (
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="h-4 w-4" />
-                    <span>Free shipping unlocked. Enjoy!</span>
-                  </div>
-                ) : (
-                  <span>
-                    Spend{" "}
-                    <span className="font-semibold">
-                      {formatMoney(remainingForFree, currency)}
-                    </span>{" "}
-                    more for free shipping.
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+            {remainingForFree > 0 && items.length > 0 && (
+              <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700">
+                    {dict.free_shipping_at.replace("{amount}", formatMoney(FREE_SHIPPING_THRESHOLD, currency, "en-US"))}
                   </span>
-                )}
-                <div className="mt-3 h-1.5 w-full rounded-full bg-rose-100">
+                  <span className="text-xs font-bold text-gray-900">
+                    {dict.to_go.replace("{amount}", formatMoney(remainingForFree, currency, "en-US"))}
+                  </span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden bg-gray-200">
                   <div
-                    className="h-1.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all"
+                    className="h-full bg-gray-900 transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="flex-1 px-6 pb-6 pt-6">
+            <div className="flex-1 px-6 py-6">
               {items.length === 0 ? (
-                <div className="mt-10 rounded-3xl border border-dashed border-rose-200 bg-white/80 p-10 text-center shadow-sm">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
-                    <ShoppingBag className="h-6 w-6" />
+                <div className="flex h-full flex-col items-center justify-center py-12 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                    <ShoppingBag className="h-8 w-8 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Your cart is empty
+                  <h3 className="mb-2 text-lg font-black uppercase text-gray-900">
+                    {dict.empty_title}
                   </h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Explore our newest arrivals and save your favorites.
+                  <p className="mb-6 text-sm text-gray-500">
+                    {dict.empty_desc}
                   </p>
-                  <button 
-                    className="mt-5 inline-flex items-center gap-2 rounded-full border border-rose-200 px-5 py-2 text-sm font-medium text-rose-600 transition hover:border-rose-300 hover:bg-rose-50"
+                  <button
+                    className="rounded-sm bg-gray-900 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800"
                     onClick={onClose}
                   >
-                    Continue shopping
-                    <ChevronRight className="h-4 w-4" />
+                    {dict.continue_shopping}
                   </button>
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="group flex gap-4 rounded-3xl border border-rose-100/70 bg-white/90 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                      className="flex gap-4 border-b border-gray-100 pb-4 last:border-0"
                     >
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-rose-50">
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-gray-100">
                         {item.image ? (
                           <Image
                             src={item.image}
                             alt={item.name}
                             fill
                             className="object-cover"
-                            sizes="80px"
+                            sizes="96px"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-rose-300">
-                            <ShoppingBag className="h-5 w-5" />
+                          <div className="flex h-full w-full items-center justify-center text-gray-300">
+                            <ShoppingBag className="h-6 w-6" />
                           </div>
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <h4 className="text-sm font-semibold text-gray-900">
+                      <div className="flex flex-1 flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="text-sm font-bold uppercase text-gray-900">
                               {item.name}
                             </h4>
-                            {item.variant ? (
-                              <p className="mt-1 text-xs text-gray-500">
-                                {item.variant}
-                              </p>
-                            ) : null}
-                          </div>
-                          <button
-                            onClick={() => onRemove?.(item.id)}
-                            className="cursor-pointer shrink-0 rounded-full border border-transparent px-2 py-1 text-xs font-semibold text-gray-400 transition hover:border-rose-100 hover:text-rose-500"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          <div className="flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50 px-2 py-1">
                             <button
-                              onClick={() => onIncDec?.(item.id, -1)}
-                              className="cursor-pointer flex h-6 w-6 items-center justify-center rounded-full bg-white text-rose-600 shadow-sm transition hover:bg-rose-100"
-                              aria-label="Decrease quantity"
+                              onClick={() => onRemove(item.id)}
+                              className="shrink-0 p-1 text-gray-400 transition-colors hover:text-gray-900"
+                              aria-label={dict.remove_item_aria}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                          {item.variant && (
+                            <p className="mt-1 text-xs text-gray-500">{item.variant}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => onIncDec(item.id, -1)}
+                              className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
+                              aria-label={dict.decrease_qty_aria}
                             >
                               <Minus className="h-3 w-3" />
                             </button>
-                            <span className="w-6 text-center text-sm font-semibold text-gray-900">
+                            <span className="w-8 text-center text-sm font-bold text-gray-900">
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => onIncDec?.(item.id, 1)}
-                              className="cursor-pointer flex h-6 w-6 items-center justify-center rounded-full bg-white text-rose-600 shadow-sm transition hover:bg-rose-100"
-                              aria-label="Increase quantity"
+                              onClick={() => onIncDec(item.id, 1)}
+                              className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
+                              aria-label={dict.increase_qty_aria}
                             >
                               <Plus className="h-3 w-3" />
                             </button>
                           </div>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {formatMoney(item.price * item.quantity, currency)}
+                          <p className="text-sm font-black text-gray-900">
+                            {formatMoney(item.price * item.quantity, currency, "en-US")}
                           </p>
                         </div>
                       </div>
@@ -288,49 +296,51 @@ const CartSidebar = ({
                 </div>
               )}
             </div>
+          </div>
 
-            <div className="shrink-0 border-t border-rose-100/70 bg-white/95 px-6 py-6 backdrop-blur">
-              <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-white to-rose-50/60 p-4">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
-                  <span className="font-semibold text-gray-900">
-                    {formatMoney(subtotal, currency)}
+          {items.length > 0 && (
+            <div className="shrink-0 border-t border-gray-200 bg-white px-6 py-6">
+              <div className="mb-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{dict.subtotal}</span>
+                  <span className="font-bold text-gray-900">
+                    {formatMoney(subtotal, currency, "en-US")}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center justify-between text-sm text-gray-500">
-                  <span>Shipping</span>
-                  <span className="font-semibold text-gray-900">
-                    {shipping === 0 ? "Free" : formatMoney(shipping, currency)}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{dict.shipping}</span>
+                  <span className="font-bold text-gray-900">
+                    {shipping === 0 ? dict.shipping_free : formatMoney(shipping, currency, "en-US")}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center justify-between text-sm text-gray-500">
-                  <span>Tax</span>
-                  <span className="font-semibold text-gray-900">
-                    {formatMoney(tax, currency)}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{dict.tax}</span>
+                  <span className="font-bold text-gray-900">
+                    {formatMoney(tax, currency, "en-US")}
                   </span>
                 </div>
-                <div className="mt-4 flex items-center justify-between text-base font-semibold text-gray-900">
-                  <span>Total</span>
-                  <span className="text-lg">
-                    {formatMoney(total, currency)}
+                <div className="flex items-center justify-between border-t border-gray-200 pt-2 text-base">
+                  <span className="font-black uppercase">{dict.total}</span>
+                  <span className="text-xl font-black text-gray-900">
+                    {formatMoney(total, currency, "en-US")}
                   </span>
                 </div>
               </div>
 
-              <button 
-                className="cursor-pointer mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
-                onClick={() => alert("This feature will be added soon")} 
-              >  
-                Secure checkout
+              <button
+                className="mb-3 flex w-full items-center justify-center gap-2 bg-gray-900 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800"
+                onClick={() => alert(dict.checkout_coming_soon)}
+              >
+                {dict.checkout}
                 <ShieldCheck className="h-4 w-4" />
               </button>
 
-              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
-                <ShieldCheck className="h-4 w-4 text-rose-500" />
-                <span>Encrypted checkout · 30-day returns</span>
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>{dict.secure_note}</span>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </aside>
     </div>

@@ -1,0 +1,134 @@
+{
+  "header": {
+    "cart": {
+      "title": "Your Bag",
+      "item_singular": "item",
+      "item_plural": "items",
+      "close_aria": "Close cart",
+
+      "free_shipping_at": "Free shipping at {amount}",
+      "to_go": "{amount} to go",
+
+      "empty_title": "Your bag is empty",
+      "empty_desc": "Add items to get started",
+      "continue_shopping": "Continue Shopping",
+
+      "remove_item_aria": "Remove item",
+      "decrease_qty_aria": "Decrease quantity",
+      "increase_qty_aria": "Increase quantity",
+
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "total": "Total",
+
+      "shipping_free": "Free",
+
+      "checkout": "Checkout",
+      "checkout_coming_soon": "Checkout feature coming soon",
+
+      "secure_note": "Secure checkout • Free returns"
+    }
+  },
+  "home": {
+    "hero": {
+      "alt": "Featured collection",
+      "badge": "New Arrival",
+      "headline": "Own the moment",
+      "subheadline": "Curated bags crafted for modern rituals. Discover silhouettes that feel effortless and unmistakably yours.",
+      "shop_women": "Shop Women",
+      "new_in": "New In",
+      "sale": "Sale",
+      "scroll": "Scroll"
+    },
+    "quick_links": {
+      "popular": "Popular",
+      "categories": ["Tote Bags", "Crossbody", "Shoulder Bags", "Clutches", "Backpacks", "Travel Bags"]
+    },
+    "collection": {
+      "title": "Featured Collection",
+      "items": "items",
+      "view_all": "View All",
+      "coming_soon": "Coming Soon",
+      "launching_soon": "New collection launching shortly"
+    },
+    "sustainability": {
+      "badge": "Sustainability",
+      "headline": "Crafted with care",
+      "subheadline": "Every bag tells a story of ethical sourcing, sustainable materials, and timeless design.",
+      "learn_more": "Learn More"
+    },
+    "stats": [
+      { "value": "5K+", "label": "Happy Customers" },
+      { "value": "4.9★", "label": "Average Rating" },
+      { "value": "100%", "label": "Premium Quality" },
+      { "value": "2-3", "label": "Days Delivery" }
+    ]
+  },
+  "product_card": {
+    "no_image": "No Image",
+    "viewed": "Viewed",
+    "add_to_cart": "Add to Cart",
+    "added": "Added",
+    "rating": "(4.5)",
+    "currency": "MAD"
+  },
+
+  "footer": {
+    "brand": {
+      "name": "Elegance",
+      "description": "Your destination for premium women's bags and accessories crafted with excellence."
+    },
+    "sections": {
+      "shop": "Shop",
+      "support": "Support",
+      "follow_us": "Follow Us"
+    },
+    "links": {
+      "all_bags": "All Bags",
+      "new_arrivals": "New Arrivals",
+      "bestsellers": "Bestsellers",
+      "sale": "Sale",
+      "contact_us": "Contact Us",
+      "shipping_info": "Shipping Info",
+      "returns_exchanges": "Returns & Exchanges",
+      "faq": "FAQ",
+      "privacy_policy": "Privacy Policy",
+      "terms_of_service": "Terms of Service",
+      "cookie_policy": "Cookie Policy"
+    },
+    "social": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest",
+      "tiktok": "TikTok"
+    },
+    "footer": {
+      "copyright": "© {year} Elegance Studio. All rights reserved."
+    }
+  },
+
+  "product": {
+    "product": {
+      "back": "Back",
+      "home": "Home",
+      "shop": "Shop",
+      "currency": "MAD",
+      "tax_info": "Tax included. Shipping calculated at checkout.",
+      "description": "Description",
+      "features": [
+        { "icon": "M5 13l4 4L19 7", "text": "Premium quality materials" },
+        { "icon": "M5 13l4 4L19 7", "text": "Expert craftsmanship" },
+        { "icon": "M5 13l4 4L19 7", "text": "Free shipping over 500 MAD" },
+        { "icon": "M5 13l4 4L19 7", "text": "30-day returns guarantee" }
+      ],
+      "favorite": "Favorite",
+      "share": "Share",
+      "guarantees": [
+        { "icon": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", "label": "Secure" },
+        { "icon": "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", "label": "Gift Wrap" },
+        { "icon": "M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6", "label": "Returns" }
+      ]
+    }
+  }
+}

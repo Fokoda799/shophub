@@ -1,6 +1,6 @@
-import { listProducts } from "../../lib/products";
-import AdminCreateProductForm from "../../components/AdminCreateProductForm";
-import AdminProductRow from "../../components/AdminProductRow";
+import { listProducts } from "../../../lib/products";
+import AdminCreateProductForm from "../../../components/AdminCreateProductForm";
+import AdminProductRow from "../../../components/AdminProductRow";
 
 export default async function AdminPage() {
   const products = await listProducts();

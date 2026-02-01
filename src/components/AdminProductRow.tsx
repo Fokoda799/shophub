@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { ProductDoc } from "../lib/products";
-import { deleteProductAction, updateProductAction } from "../app/admin/actions";
+import { deleteProductAction, updateProductAction } from "../app/[locale]/admin/actions";
 
 export default function AdminProductRow({ product }: { product: ProductDoc }) {
   const [open, setOpen] = useState(false);

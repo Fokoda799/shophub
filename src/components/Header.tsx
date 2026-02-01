@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
-import Link from 'next/link'
-import { ShoppingCart } from 'lucide-react';
-import CartSidebar from './CartSidebar';
+"use client";
 
-const Header = ({pathname}: {pathname: string}) => {
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ShoppingCart, Menu, X } from 'lucide-react';
+import CartSidebar from './CartSidebar';
+import LanguageSwitcher from './LangSwitcher';
+
+const Header = ({locale, dict}: {locale: 'en' | 'fr' | 'ar'; dict: any}) => {
   const [scrollY, setScrollY] = useState(0);
   const [openCart, setOpenCart] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
   const [itemsInCart, setItemsInCart] = useState(0);
 
   const getCartCount = () => {
@@ -51,52 +55,65 @@ const Header = ({pathname}: {pathname: string}) => {
     };
   }, []);
 
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${scrollY > 0 ? 'bg-white shadow-md' : 'bg-transparent'} mx-auto max-w-7xl px-6 py-5 flex items-center justify-between`}>
-        <div className="font-serif text-2xl font-bold bg-gradient-to-r from-rose-600 to-amber-600 bg-clip-text text-transparent">
-          Elegance
-        </div>
-        <nav className="flex gap-6 items-center">
-          {pathname === '/' ? (
-            <Link 
-              className="text-gray-700 hover:text-rose-600 transition-colors font-medium" 
-              href="/shop"
-            >
-              Shop
+    <>
+      <header 
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+          scrollY > 20 
+            ? 'bg-white shadow-md' 
+            : ''
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex h-16 items-center justify-between">
+            <Link href="/" className="text-2xl font-black uppercase tracking-tight text-gray-900">
+              Elegance
             </Link>
-          ) :
-            <div
-              className="text-gray-700 relative hover:text-rose-600 transition-colors font-medium cursor-pointer"
-              onClick={() => setOpenCart(true)}  
-            >
-              <ShoppingCart />
-              {itemsInCart > 0 && (
-                <div className="absolute -top-2 -right-3 w-4 h-4 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">
-                  {itemsInCart}
-                </div>
-              )}
+
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher currentLocale={locale} />
+
+              <button
+                onClick={() => setOpenCart(true)}
+                className="relative rounded-sm p-2 transition-colors hover:bg-gray-100"
+                aria-label="Shopping cart"
+              >
+                <ShoppingCart className="h-5 w-5 text-gray-900" />
+                {itemsInCart > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">
+                    {itemsInCart > 9 ? '9+' : itemsInCart}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setOpenMenu(!openMenu)}
+                className="rounded-sm p-2 transition-colors hover:bg-gray-100 md:hidden"
+                aria-label="Menu"
+              >
+                {openMenu ? (
+                  <X className="h-5 w-5 text-gray-900" />
+                ) : (
+                  <Menu className="h-5 w-5 text-gray-900" />
+                )}
+              </button>
             </div>
-          }
-          {/* <Link 
-            className="text-gray-700 hover:text-rose-600 transition-colors font-medium" 
-            href="/about"
-          >
-            About
-          </Link>
-          <Link 
-            className="text-gray-700 hover:text-rose-600 transition-colors font-medium" 
-            href="/contact"
-          >
-            Contact
-          </Link> */}
-        </nav>
-
-        <CartSidebar isOpen={openCart} onClose={() => {
-          setOpenCart(false)
-          window.dispatchEvent(new Event("cart:deleted"));
-        }} />
+          </div>
+        </div>
       </header>
-  )
-}
 
-export default Header 
+      <CartSidebar 
+        locale={locale}
+        dict={dict.cart}
+        isOpen={openCart} 
+        onClose={() => {
+          setOpenCart(false);
+          window.dispatchEvent(new Event("cart:deleted"));
+        }} 
+      />
+    </>
+  );
+};
+
+export default Header;

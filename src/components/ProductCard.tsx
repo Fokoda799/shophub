@@ -6,16 +6,45 @@ import { ProductDoc } from "../lib/products";
 import { getPublicAppwriteImageUrl } from "../lib/appwrite-client-urls";
 import { useEffect, useState } from "react";
 
-export default function ProductCard({ product }: { product: ProductDoc }) {
+type ProductCardDict = {
+  no_image: string;
+  viewed: string;
+  add_to_cart: string;
+  added: string;
+  rating: string;
+  currency: string;
+};
+
+const defaultDict: ProductCardDict = {
+  no_image: "No Image",
+  viewed: "Viewed",
+  add_to_cart: "Add to Cart",
+  added: "Added",
+  rating: "(4.5)",
+  currency: "MAD",
+};
+
+export default function ProductCard({
+  product,
+  dict,
+}: {
+  product: ProductDoc;
+  dict?: ProductCardDict;
+}) {
   const coverId = product.imageFileIds?.[0];
   const coverUrl = coverId ? getPublicAppwriteImageUrl(coverId) : null;
   const [seenFlag, setSeenFlag] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const copy = dict ?? defaultDict;
   
-  // Validate URL
   const isValidUrl = coverUrl && coverUrl.startsWith('http');
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    setIsAddingToCart(true);
+    
     const key = `cart_item_${product.$id}`;
     const existingRaw = localStorage.getItem(key);
     let nextQuantity = 1;
@@ -44,13 +73,15 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
     );
 
     window.dispatchEvent(new Event("cart:updated"));
+    
+    setTimeout(() => setIsAddingToCart(false), 1000);
   }
 
   useEffect(() => {
     setSeenFlag(localStorage.getItem(`seen_product_${product.$id}`) !== null);
   }, [product.$id]);
 
-  const seen = () => {
+  const markAsSeen = () => {
     localStorage.setItem(`seen_product_${product.$id}`, Date.now().toString());
   }
 
@@ -58,104 +89,112 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
     <Link
       href={`/product/${product.$id}`}
       className="group block"
-      onClick={seen}
+      onClick={markAsSeen}
     >
-      <div className="bg-white rounded-3xl overflow-hidden border border-rose-100/50 shadow-sm hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
-        {/* Image Container */}
-        <div className="aspect-square bg-gradient-to-br from-rose-50 to-pink-50 relative overflow-hidden">
+      <article className="overflow-hidden bg-white transition-all duration-300 hover:shadow-xl">
+        <div className="relative aspect-3/4 overflow-hidden">
           {isValidUrl ? (
             <>
               <Image
                 src={coverUrl}
                 alt={product.title}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-contain transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 640px) 120vw, (max-width: 1024px) 60vw, 30vw"
               />
-              {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/5" />
             </>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-rose-300">
-              <svg className="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <div className="flex h-full w-full flex-col items-center justify-center text-gray-300">
+              <svg
+                className="mb-2 h-12 w-12"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
-              <span className="text-sm font-medium">No image</span>
+              <span className="text-xs font-medium uppercase tracking-wide">
+                {copy.no_image}
+              </span>
             </div>
           )}
           
-          {/* Quick View Badge */}
-          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-              <svg className={`w-5 h-5 ${seenFlag ? "text-rose-600" :""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
+          {seenFlag && (
+            <div className="absolute left-3 top-3">
+              <div className="rounded bg-gray-900/80 px-2 py-1 text-xs font-bold uppercase tracking-wide text-white backdrop-blur-sm">
+                {copy.viewed}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Favorite Icon */}
-          {/* <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-0 left-0 right-0 translate-y-full bg-white p-4 transition-transform duration-300 group-hover:translate-y-0">
             <button 
-              className="bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-rose-50 transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                // Add to favorites logic
-              }}
+              className={`flex w-full items-center justify-center gap-2 rounded-sm bg-gray-900 py-3 text-sm font-bold uppercase tracking-wide text-white transition-all hover:bg-gray-800 ${
+                isAddingToCart ? 'bg-green-600 hover:bg-green-600' : ''
+              }`}
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
             >
-              <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
+              {isAddingToCart ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  {copy.added}
+                </>
+              ) : (
+                <>
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {copy.add_to_cart}
+                </>
+              )}
             </button>
-          </div> */}
+          </div>
         </div>
 
-        {/* Product Info */}
-        <div className="p-5">
-          {/* Title */}
-          <h3 className="font-semibold text-gray-900 text-lg mb-2 line-clamp-2 group-hover:text-rose-600 transition-colors">
-            {product.title}
-          </h3>
+        <div className="p-4">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <h3 className="line-clamp-2 text-sm font-bold uppercase tracking-wide text-gray-900">
+              {product.title}
+            </h3>
+          </div>
 
-          {/* Description - Optional */}
           {product.description && (
-            <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+            <p className="mb-3 line-clamp-2 text-xs text-gray-600">
               {product.description}
             </p>
           )}
 
-          {/* Price and CTA */}
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              <div className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                {product.price.toFixed(2)} MAD
-              </div>
+          <div className="flex items-center justify-between">
+            <div className="text-lg font-black text-gray-900">
+              {product.price.toFixed(2)} {copy.currency}
             </div>
             
-            {/* Add to Cart Button */}
-            <button 
-              className="px-4 py-2.5 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 text-white font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:shadow-lg transform hover:scale-105 cursor-pointer"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </button>
-          </div>
-
-          {/* Rating - Optional */}
-          <div className="flex items-center gap-1 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <svg
-                key={star}
-                className="w-4 h-4 text-amber-400 fill-current"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-              </svg>
-            ))}
-            <span className="text-xs text-gray-500 ml-1">(4.5)</span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <svg
+                  key={star}
+                  className="h-3 w-3 fill-current text-amber-400"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              ))}
+              <span className="ml-1 text-xs text-gray-500">{copy.rating}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </article>
     </Link>
   );
 }

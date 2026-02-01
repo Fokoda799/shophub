@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Permission, Role } from "node-appwrite";
-import { createAppwriteServer } from "../../lib/appwrite-server";
+import { createAppwriteServer } from "../../../lib/appwrite-server";
 
 const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 const productsCollectionId = process.env.NEXT_PUBLIC_APPWRITE_PRODUCTS_COLLECTION_ID!;

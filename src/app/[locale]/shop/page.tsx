@@ -1,9 +1,18 @@
-import ProductCard from "../../components/ProductCard";
-import { listProducts } from "../../lib/products";
+import ProductCard from "../../../components/ProductCard";
+import { listProducts } from "../../../lib/products";
 import Link from "next/link";
+import type { Locale } from "../../../../i18n.config";
+import { getDictionary } from "components/lib/dictionaries";
 
-export default async function ShopPage() {
+export default async function ShopPage({
+  params,
+}: {
+  params: { locale: Locale };
+}) {
   const products = await listProducts();
+  const { locale } = params;
+  const j = await getDictionary(locale);
+  const productCardDict = j.product_card;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50">
@@ -46,7 +55,7 @@ export default async function ShopPage() {
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((p) => (
-            <ProductCard key={p.$id} product={p} />
+            <ProductCard key={p.$id} product={p} dict={productCardDict} />
           ))}
         </div>
 

@@ -1,63 +1,139 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-const Footer = () => {
+const Footer = ({ dict }: { dict: any }) => {
   return (
-    <footer className="bg-gray-900 text-white mt-20">
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        {/* <div className="grid md:grid-cols-4 gap-8 mb-8">
+    <footer className="bg-gray-900 text-white">
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-12 md:grid-cols-4 md:gap-8">
           <div>
-            <div className="font-serif text-2xl font-bold bg-linear-to-r from-rose-400 to-amber-400 bg-clip-text text-transparent mb-4">
-              Elegance
-            </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Your destination for premium women&apos;s bags and accessories.
+            <h3 className="mb-6 text-2xl font-black uppercase tracking-tight">
+              {dict.brand.name}
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-400">
+              {dict.brand.description}
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Shop</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li><Link href="/shop" className="hover:text-rose-400 transition-colors">All Bags</Link></li>
-              <li><Link href="/new-arrivals" className="hover:text-rose-400 transition-colors">New Arrivals</Link></li>
-              <li><Link href="/bestsellers" className="hover:text-rose-400 transition-colors">Bestsellers</Link></li>
-              <li><Link href="/sale" className="hover:text-rose-400 transition-colors">Sale</Link></li>
+            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest">{dict.sections.shop}</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li>
+                <Link href="/shop" className="transition-colors hover:text-white">
+                  {dict.links.all_bags}
+                </Link>
+              </li>
+              <li>
+                <Link href="/new-arrivals" className="transition-colors hover:text-white">
+                  {dict.links.new_arrivals}
+                </Link>
+              </li>
+              <li>
+                <Link href="/bestsellers" className="transition-colors hover:text-white">
+                  {dict.links.bestsellers}
+                </Link>
+              </li>
+              <li>
+                <Link href="/sale" className="transition-colors hover:text-white">
+                  {dict.links.sale}
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Customer Care</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li><Link href="/contact" className="hover:text-rose-400 transition-colors">Contact Us</Link></li>
-              <li><Link href="/shipping" className="hover:text-rose-400 transition-colors">Shipping Info</Link></li>
-              <li><Link href="/returns" className="hover:text-rose-400 transition-colors">Returns</Link></li>
-              <li><Link href="/faq" className="hover:text-rose-400 transition-colors">FAQ</Link></li>
+            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest">{dict.sections.support}</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li>
+                <Link href="/contact" className="transition-colors hover:text-white">
+                  {dict.links.contact_us}
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping" className="transition-colors hover:text-white">
+                  {dict.links.shipping_info}
+                </Link>
+              </li>
+              <li>
+                <Link href="/returns" className="transition-colors hover:text-white">
+                  {dict.links.returns_exchanges}
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="transition-colors hover:text-white">
+                  {dict.links.faq}
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Connect</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Facebook</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Pinterest</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">TikTok</a></li>
+            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest">{dict.sections.follow_us}</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-white"
+                >
+                  {dict.social.instagram}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-white"
+                >
+                  {dict.social.facebook}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://pinterest.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-white"
+                >
+                  {dict.social.pinterest}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://tiktok.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-white"
+                >
+                  {dict.social.tiktok}
+                </a>
+              </li>
             </ul>
           </div>
-        </div> */}
+        </div>
 
-        {/* Bottom Bar */}
-        <div className=" pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-400 text-sm">
-            © 2026 Elegance. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-gray-400 text-sm">
-            <Link href="/privacy" className="hover:text-rose-400 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-rose-400 transition-colors">Terms of Service</Link>
+        <div className="mt-12 border-t border-gray-800 pt-8">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-sm text-gray-400">
+              {dict.footer.copyright.replace("{year}", new Date().getFullYear())}
+            </p>
+            <div className="flex gap-6 text-sm text-gray-400">
+              <Link href="/privacy" className="transition-colors hover:text-white">
+                {dict.links.privacy_policy}
+              </Link>
+              <Link href="/terms" className="transition-colors hover:text-white">
+                {dict.links.terms_of_service}
+              </Link>
+              <Link href="/cookies" className="transition-colors hover:text-white">
+                {dict.links.cookie_policy}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
