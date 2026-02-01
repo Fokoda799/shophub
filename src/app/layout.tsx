@@ -4,6 +4,7 @@ import "./globals.css";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { usePathname } from "next/navigation";
 import Headers from "../components/Header";
+import Footer from "../components/Footer";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -30,8 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${playfair.variable}`}>
-        {allow && <Headers />}
+        {allow && <Headers pathname={pathname} />}
         {children}
+        {allow && <Footer />}
       </body>
     </html>
   );

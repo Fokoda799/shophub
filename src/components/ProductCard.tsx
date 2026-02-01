@@ -4,18 +4,61 @@ import Link from "next/link";
 import Image from "next/image";
 import { ProductDoc } from "../lib/products";
 import { getPublicAppwriteImageUrl } from "../lib/appwrite-client-urls";
+import { useEffect, useState } from "react";
 
 export default function ProductCard({ product }: { product: ProductDoc }) {
   const coverId = product.imageFileIds?.[0];
   const coverUrl = coverId ? getPublicAppwriteImageUrl(coverId) : null;
+  const [seenFlag, setSeenFlag] = useState(false);
   
   // Validate URL
   const isValidUrl = coverUrl && coverUrl.startsWith('http');
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const key = `cart_item_${product.$id}`;
+    const existingRaw = localStorage.getItem(key);
+    let nextQuantity = 1;
+
+    if (existingRaw) {
+      try {
+        const existing = JSON.parse(existingRaw);
+        if (typeof existing?.quantity === "number") {
+          nextQuantity = existing.quantity + 1;
+        }
+      } catch {
+        nextQuantity = 1;
+      }
+    }
+
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        productId: product.$id,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        quantity: nextQuantity,
+        imageFileIds: product.imageFileIds,
+      })
+    );
+
+    window.dispatchEvent(new Event("cart:updated"));
+  }
+
+  useEffect(() => {
+    setSeenFlag(localStorage.getItem(`seen_product_${product.$id}`) !== null);
+  }, [product.$id]);
+
+  const seen = () => {
+    localStorage.setItem(`seen_product_${product.$id}`, Date.now().toString());
+  }
 
   return (
     <Link
       href={`/product/${product.$id}`}
       className="group block"
+      onClick={seen}
     >
       <div className="bg-white rounded-3xl overflow-hidden border border-rose-100/50 shadow-sm hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
         {/* Image Container */}
@@ -44,7 +87,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
           {/* Quick View Badge */}
           <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-              <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 ${seenFlag ? "text-rose-600" :""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
@@ -52,7 +95,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
           </div>
 
           {/* Favorite Icon */}
-          <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {/* <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button 
               className="bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-rose-50 transition-colors"
               onClick={(e) => {
@@ -64,7 +107,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Product Info */}
@@ -91,11 +134,8 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
             
             {/* Add to Cart Button */}
             <button 
-              className="px-4 py-2.5 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 text-white font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:shadow-lg transform hover:scale-105"
-              onClick={(e) => {
-                e.preventDefault();
-                // Add to cart logic
-              }}
+              className="px-4 py-2.5 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 text-white font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:shadow-lg transform hover:scale-105 cursor-pointer"
+              onClick={handleAddToCart}
             >
               Add to Cart
             </button>

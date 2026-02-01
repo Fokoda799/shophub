@@ -19,7 +19,7 @@ export default async function ShopPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-rose-100/50 p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className=" bg-white rounded-2xl shadow-sm border border-rose-100/50 p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-gray-600">
             <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -32,12 +32,12 @@ export default async function ShopPage() {
             <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-medium text-sm hover:shadow-lg transition-all duration-300">
               All Bags
             </button>
-            <button className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:border-rose-600 hover:text-rose-600 transition-colors">
+            {/* <button className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:border-rose-600 hover:text-rose-600 transition-colors">
               New Arrivals
             </button>
             <button className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:border-rose-600 hover:text-rose-600 transition-colors">
               Best Sellers
-            </button>
+            </button> */}
           </div>
         </div>
       </section>
@@ -73,67 +73,6 @@ export default async function ShopPage() {
           </div>
         )}
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
-        <div className="mx-auto max-w-7xl px-6 py-12">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            {/* Brand */}
-            <div>
-              <div className="font-serif text-2xl font-bold bg-gradient-to-r from-rose-400 to-amber-400 bg-clip-text text-transparent mb-4">
-                Elegance
-              </div>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Your destination for premium women's bags and accessories.
-              </p>
-            </div>
-
-            {/* Shop */}
-            <div>
-              <h4 className="font-semibold mb-4">Shop</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/shop" className="hover:text-rose-400 transition-colors">All Bags</Link></li>
-                <li><Link href="/new-arrivals" className="hover:text-rose-400 transition-colors">New Arrivals</Link></li>
-                <li><Link href="/bestsellers" className="hover:text-rose-400 transition-colors">Bestsellers</Link></li>
-                <li><Link href="/sale" className="hover:text-rose-400 transition-colors">Sale</Link></li>
-              </ul>
-            </div>
-
-            {/* Customer Care */}
-            <div>
-              <h4 className="font-semibold mb-4">Customer Care</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><Link href="/contact" className="hover:text-rose-400 transition-colors">Contact Us</Link></li>
-                <li><Link href="/shipping" className="hover:text-rose-400 transition-colors">Shipping Info</Link></li>
-                <li><Link href="/returns" className="hover:text-rose-400 transition-colors">Returns</Link></li>
-                <li><Link href="/faq" className="hover:text-rose-400 transition-colors">FAQ</Link></li>
-              </ul>
-            </div>
-
-            {/* Connect */}
-            <div>
-              <h4 className="font-semibold mb-4">Connect</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-rose-400 transition-colors">Instagram</a></li>
-                <li><a href="#" className="hover:text-rose-400 transition-colors">Facebook</a></li>
-                <li><a href="#" className="hover:text-rose-400 transition-colors">Pinterest</a></li>
-                <li><a href="#" className="hover:text-rose-400 transition-colors">TikTok</a></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
-              © 2026 Elegance. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-gray-400 text-sm">
-              <Link href="/privacy" className="hover:text-rose-400 transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-rose-400 transition-colors">Terms of Service</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
