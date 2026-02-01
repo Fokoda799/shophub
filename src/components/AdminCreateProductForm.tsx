@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { createProductAction } from "../app/admin/actions";
 import Image from "next/image";
 
-export default function AdminCreateProductForm() {
+export default function  AdminCreateProductForm() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [msg, setMsg] = useState<string>("");
 
