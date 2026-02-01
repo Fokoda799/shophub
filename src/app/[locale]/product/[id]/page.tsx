@@ -7,24 +7,22 @@ import { getDictionary } from "../../../../lib/dictionaries";
 import type { Locale } from "../../../../../i18n.config";
 import Header from "../../../../components/Header";
 
-type ParamsShape = {
-  params: { locale: Locale; id: string };
-};
+type RouteParams = { locale: Locale; id: string };
 
-async function resolveParams(params: unknown): Promise<ParamsShape> {
+async function resolveParams(params: unknown): Promise<RouteParams> {
   // Await the thenable/promise or return the object directly
   const awaited = await Promise.resolve(params as any);
 
   // Sometimes Next gives params as a JSON string (as you saw)
   if (typeof awaited === "string") {
-    return JSON.parse(awaited) as ParamsShape;
+    return JSON.parse(awaited) as RouteParams;
   }
 
-  return awaited as ParamsShape;
+  return awaited as RouteParams;
 }
 
 
-export default async function ProductPage({ params }: ParamsShape) {
+export default async function ProductPage({ params }: { params: RouteParams }) {
   const { locale, id } = await resolveParams(params);
 
   if (!id) {

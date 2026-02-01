@@ -1,8 +1,8 @@
 import "./globals.css";
 import { DM_Sans, Playfair_Display } from "next/font/google";
-import { i18n, Locale } from "../../../i18n.config";
+import { i18n, type Locale } from "../../../i18n.config";
 import Shell from "../../components/Shell";
-import { getDictionary } from 'components/lib/dictionaries';
+import { getDictionary } from "../../lib/dictionaries";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -20,14 +20,20 @@ export const generateStaticParams = async () => {
   return i18n.locales.map((locale) => ({ locale }));
 };
 
-export default async function RootLayout({
-  children,
-  params,
-}: {
+type LayoutProps = {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = await Promise.resolve(params);
+  params: Promise<{ locale: string }>; // ✅ Changed to Promise
+};
+
+function isLocale(value: string): value is Locale {
+  return (i18n.locales as readonly string[]).includes(value);
+}
+
+export default async function RootLayout({ children, params }: LayoutProps) {
+  // ✅ Await params
+  const { locale: localeParam } = await params;
+  const locale: Locale = isLocale(localeParam) ? localeParam : i18n.defaultLocale;
+
   const dict = await getDictionary(locale);
   const dir = i18n.dir(locale);
 
