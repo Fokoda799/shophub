@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createProductAction } from "../app/[locale]/admin/actions";
+import { createProductAction } from "@/app/[locale]/admin/actions";
 import Image from "next/image";
+import Button from "@/components/ui/Button";
 
 export default function AdminProductForm() {
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -22,10 +23,11 @@ export default function AdminProductForm() {
       // Reset
       formRef.current?.reset();
       setPreviews([]);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
       setStatus({
         type: "error",
-        message: err?.message || "Something went wrong",
+        message,
       });
     }
   }
@@ -102,13 +104,13 @@ export default function AdminProductForm() {
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={status?.type === "loading"}
         className="w-full px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 disabled:opacity-60"
       >
         {status?.type === "loading" ? "Uploading..." : "Create product"}
-      </button>
+      </Button>
 
       {status?.type !== "idle" && status?.message && (
         <div

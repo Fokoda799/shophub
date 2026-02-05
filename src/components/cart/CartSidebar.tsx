@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Minus,
   Plus,
@@ -10,7 +11,10 @@ import {
   X,
   Trash2,
 } from "lucide-react";
-import { getPublicAppwriteImageUrl } from "../lib/appwrite-client-urls";
+import { getPublicAppwriteImageUrl } from "@/lib/appwrite-client-urls";
+import { useLanguage } from "@/context/LanguageContext";
+import Button from "@/components/ui/Button";
+import { withLocalePath } from "@/lib/locale-path";
 
 type CartItem = {
   id: string;
@@ -23,7 +27,6 @@ type CartItem = {
 
 type CartSidebarProps = {
   locale: 'en' | 'fr' | 'ar';
-  dict: any;
   isOpen: boolean;
   onClose?: () => void;
   currency?: string;
@@ -42,13 +45,13 @@ const formatMoney = (value: number, currency: string, locale: string) =>
 
 const CartSidebar = ({
   locale,
-  dict,
   isOpen,
   onClose,
   currency = "MAD",
   shipping = 0,
   tax = 0,
 }: CartSidebarProps) => {
+  const dict = useLanguage("header").cart;
   const [items, setItems] = useState<CartItem[]>([]);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + shipping + tax;
@@ -58,27 +61,33 @@ const CartSidebar = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    const itemsLocal: CartItem[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("cart_item_")) {
-        const item = localStorage.getItem(key);
-        if (item) {
-          const parsedItem = JSON.parse(item);
-          itemsLocal.push({
-            id: parsedItem.productId,
-            name: parsedItem.title,
-            price: parsedItem.price,
-            quantity: parsedItem.quantity,
-            image: parsedItem.imageFileIds?.[0]
-              ? getPublicAppwriteImageUrl(parsedItem.imageFileIds[0])
-              : null,
-          });
+    const timeoutId = window.setTimeout(() => {
+      const itemsLocal: CartItem[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("cart_item_")) {
+          const item = localStorage.getItem(key);
+          if (item) {
+            const parsedItem = JSON.parse(item);
+            itemsLocal.push({
+              id: parsedItem.productId,
+              name: parsedItem.title,
+              price: parsedItem.price,
+              quantity: parsedItem.quantity,
+              image: parsedItem.imageFileIds?.[0]
+                ? getPublicAppwriteImageUrl(parsedItem.imageFileIds[0])
+                : null,
+            });
+          }
         }
       }
-    }
 
-    setItems(itemsLocal);
+      setItems(itemsLocal);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -178,17 +187,17 @@ const CartSidebar = ({
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={onClose}
               className="rounded-sm p-2 transition-colors hover:bg-gray-100"
               aria-label={dict.close_aria}
             >
               <X className="h-5 w-5 text-gray-900" />
-            </button>
+            </Button>
           </header>
 
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-            {remainingForFree > 0 && items.length > 0 && (
+            {/* {remainingForFree > 0 && items.length > 0 && (
               <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
                 <div className="mb-2 flex items-center justify-between text-sm">
                   <span className="font-medium text-gray-700">
@@ -205,7 +214,7 @@ const CartSidebar = ({
                   />
                 </div>
               </div>
-            )}
+            )} */}
 
             <div className="flex-1 px-6 py-6">
               {items.length === 0 ? (
@@ -219,12 +228,12 @@ const CartSidebar = ({
                   <p className="mb-6 text-sm text-gray-500">
                     {dict.empty_desc}
                   </p>
-                  <button
+                  <Button
                     className="rounded-sm bg-gray-900 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800"
                     onClick={onClose}
                   >
                     {dict.continue_shopping}
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -254,13 +263,13 @@ const CartSidebar = ({
                             <h4 className="text-sm font-bold uppercase text-gray-900">
                               {item.name}
                             </h4>
-                            <button
+                            <Button
                               onClick={() => onRemove(item.id)}
                               className="shrink-0 p-1 text-gray-400 transition-colors hover:text-gray-900"
                               aria-label={dict.remove_item_aria}
                             >
                               <Trash2 className="h-4 w-4" />
-                            </button>
+                            </Button>
                           </div>
                           {item.variant && (
                             <p className="mt-1 text-xs text-gray-500">{item.variant}</p>
@@ -268,23 +277,23 @@ const CartSidebar = ({
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <button
+                            <Button
                               onClick={() => onIncDec(item.id, -1)}
                               className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
                               aria-label={dict.decrease_qty_aria}
                             >
                               <Minus className="h-3 w-3" />
-                            </button>
+                            </Button>
                             <span className="w-8 text-center text-sm font-bold text-gray-900">
                               {item.quantity}
                             </span>
-                            <button
+                            <Button
                               onClick={() => onIncDec(item.id, 1)}
                               className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
                               aria-label={dict.increase_qty_aria}
                             >
                               <Plus className="h-3 w-3" />
-                            </button>
+                            </Button>
                           </div>
                           <p className="text-sm font-black text-gray-900">
                             {formatMoney(item.price * item.quantity, currency, "en-US")}
@@ -313,12 +322,12 @@ const CartSidebar = ({
                     {shipping === 0 ? dict.shipping_free : formatMoney(shipping, currency, "en-US")}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
+                {/* <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">{dict.tax}</span>
                   <span className="font-bold text-gray-900">
                     {formatMoney(tax, currency, "en-US")}
                   </span>
-                </div>
+                </div> */}
                 <div className="flex items-center justify-between border-t border-gray-200 pt-2 text-base">
                   <span className="font-black uppercase">{dict.total}</span>
                   <span className="text-xl font-black text-gray-900">
@@ -327,13 +336,14 @@ const CartSidebar = ({
                 </div>
               </div>
 
-              <button
+              <Link
+                href={withLocalePath("/checkout", locale)}
+                onClick={onClose}
                 className="mb-3 flex w-full items-center justify-center gap-2 bg-gray-900 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800"
-                onClick={() => alert(dict.checkout_coming_soon)}
               >
                 {dict.checkout}
                 <ShieldCheck className="h-4 w-4" />
-              </button>
+              </Link>
 
               <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
                 <ShieldCheck className="h-3.5 w-3.5" />

@@ -1,11 +1,11 @@
 "use server";
 
 import { ID, Permission, Role } from "node-appwrite";
-import { createAppwriteServer } from "../../../lib/appwrite-server";
+import { createAppwriteServer } from "@/lib/appwrite-server";
 
-const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
-const productsCollectionId = process.env.NEXT_PUBLIC_APPWRITE_PRODUCTS_COLLECTION_ID!;
-const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID!;
+const databaseId = process.env.APPWRITE_DATABASE_ID!;
+const productsCollectionId = process.env.APPWRITE_PRODUCTS_COLLECTION_ID!;
+const bucketId = process.env.APPWRITE_BUCKET_ID!;
 
 function toPrice(value: string) {
   const n = Number(value);

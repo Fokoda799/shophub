@@ -1,13 +1,108 @@
 @import "tailwindcss";
 
-:root {
-  color-scheme: light;
+/* =========================
+   Design Tokens
+========================= */
+
+@theme {
+  --color-bg: #ffffff;
+  --color-fg: #111827;
+  --color-muted: #6b7280;
+  --color-border: rgba(17, 24, 39, 0.12);
+
+  --radius-sm: 0.125rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+
+  --shadow-soft: 0 8px 30px rgba(17, 24, 39, 0.08);
+}
+
+/* Dark mode */
+.dark {
+  --color-bg: #111827;
+  --color-fg: #f9fafb;
+  --color-muted: #9ca3af;
+  --color-border: rgba(243, 244, 246, 0.12);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================
+   Base
+========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  scrollbar-color: red;
+  min-height: 100vh;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  text-rendering: optimizeLegibility;
+}
 
+/* =========================
+   Utilities
+========================= */
+
+.font-display {
+  font-family: var(--font-playfair), serif;
+}
+
+.surface-card {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+/* =========================
+   Scrollbar (SAFE VERSION)
+========================= */
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-fg) transparent;
+  scrollbar-track-color: transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar:hover {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--color-fg) 40%, transparent);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--color-fg) 70%, transparent);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

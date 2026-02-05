@@ -59,11 +59,60 @@
       "learn_more": "اعرف أكثر"
     },
     "stats": [
-      { "value": "5K+", "label": "عملاء سعداء" },
       { "value": "4.9★", "label": "تقييم متوسط" },
       { "value": "100%", "label": "جودة عالية" },
       { "value": "2-3", "label": "أيام للتسليم" }
     ]
+  },
+
+  "shop": {
+    "hero_description": "اكتشف حقائب مختارة بعناية لرفع أناقتك. كل قطعة تجمع بين الجمال والعملية.",
+    "new_arrivals": "وصل حديثًا",
+    "best_sellers": "الأكثر مبيعًا",
+    "happy_customers": "عملاء سعداء",
+    "average_rating": "متوسط التقييم",
+    "premium_quality": "جودة ممتازة",
+    "days_delivery": "أيام التوصيل"
+  },
+  "checkout": {
+    "title": "إتمام الشراء",
+    "empty_title": "السلة فارغة",
+    "empty_desc": "أضف منتجات إلى سلتك قبل إتمام الشراء.",
+    "continue_shopping": "متابعة التسوق",
+    "contact_information": "معلومات التواصل",
+    "full_name": "الاسم الكامل",
+    "phone_number": "رقم الهاتف",
+    "email_optional": "البريد الإلكتروني (اختياري)",
+    "shipping_address": "عنوان الشحن",
+    "street_address": "العنوان",
+    "city": "المدينة",
+    "postal_code": "الرمز البريدي",
+    "order_notes_optional": "ملاحظات الطلب (اختياري)",
+    "notes_placeholder": "تعليمات خاصة بالتسليم...",
+    "processing": "جارٍ المعالجة...",
+    "place_order": "تأكيد الطلب",
+    "order_summary": "ملخص الطلب",
+    "qty": "الكمية",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "tax": "الضريبة",
+    "free": "مجاني",
+    "total": "الإجمالي",
+    "currency": "درهم",
+    "secure_checkout": "دفع آمن",
+    "free_shipping_all_items": "شحن مجاني لجميع المنتجات",
+    "returns_7_days": "استرجاع خلال 7 أيام",
+    "order_failed": "فشل الطلب. حاول مرة أخرى.",
+    "error_occurred": "حدث خطأ. حاول مرة أخرى."
+  },
+  "order_success": {
+    "title": "تم تأكيد الطلب!",
+    "description": "شكرًا لطلبك. تم استلام طلبك وسنتواصل معك قريبًا لتأكيد التفاصيل.",
+    "call_within_24h": "سنتصل بك خلال 24 ساعة",
+    "delivery_eta": "التسليم خلال 2-3 أيام عمل",
+    "back_to_home": "العودة للرئيسية",
+    "continue_shopping": "متابعة التسوق",
+    "need_help": "تحتاج مساعدة؟ تواصل معنا على +212 600 000 000"
   },
   "product_card": {
     "no_image": "لا صورة",
@@ -71,7 +120,16 @@
     "add_to_cart": "أضف إلى السلة",
     "added": "تمت الإضافة",
     "rating": "(4.5)",
-    "currency": "MAD"
+    "currency": "درهم",
+    "free_shipping": "شحن مجاني"
+  },
+  "pagination": {
+    "nav_aria": "ترقيم الصفحات",
+    "previous": "السابق",
+    "next": "التالي",
+    "previous_page_aria": "الصفحة السابقة",
+    "next_page_aria": "الصفحة التالية",
+    "page_aria": "الصفحة {page}"
   },
 
   "product": {
@@ -85,11 +143,20 @@
       "features": [
         { "icon": "M5 13l4 4L19 7", "text": "مواد عالية الجودة" },
         { "icon": "M5 13l4 4L19 7", "text": "حرفة متقنة" },
-        { "icon": "M5 13l4 4L19 7", "text": "شحن مجاني فوق 500 درهم" },
-        { "icon": "M5 13l4 4L19 7", "text": "ضمان استرجاع لمدة 30 يومًا" }
+        { "icon": "M5 13l4 4L19 7", "text": "شحن مجاني لجميع المنتجات" },
+        { "icon": "M5 13l4 4L19 7", "text": "ضمان استرجاع لمدة 7 أيام" }
       ],
       "favorite": "مفضل",
+      "save": "حفظ",
       "share": "مشاركة",
+      "share_modal": {
+        "share": "مشاركة",
+        "share_this_product": "مشاركة هذا المنتج",
+        "share_via_app": "المشاركة عبر التطبيق",
+        "copy_link": "نسخ الرابط",
+        "link_copied": "تم نسخ الرابط ✔",
+        "whatsapp": "واتساب"
+      },
       "guarantees": [
         { "icon": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", "label": "آمن" },
         { "icon": "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", "label": "تغليف هدية" },

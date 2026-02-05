@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createProductAction } from "../app/[locale]/admin/actions";
+import { createProductAction } from "@/app/[locale]/admin/actions";
 import Image from "next/image";
+import Button from "@/components/ui/Button";
 
-export default function  AdminCreateProductForm() {
+export default function AdminCreateProductForm() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [msg, setMsg] = useState<string>("");
 
@@ -22,8 +23,9 @@ export default function  AdminCreateProductForm() {
       setMsg("✅ Product created");
       formRef.current?.reset();
       setPreviews([]);
-    } catch (e: any) {
-      setMsg(`❌ ${e?.message ?? "Error"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Error";
+      setMsg(`❌ ${message}`);
     }
   }
 
@@ -92,9 +94,9 @@ export default function  AdminCreateProductForm() {
         </div>
       )}
 
-      <button className="w-full px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90">
+      <Button className="w-full px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90">
         Create product
-      </button>
+      </Button>
 
       {msg && (
         <div className="text-sm rounded-2xl border border-black/10 bg-black/5 px-4 py-3">

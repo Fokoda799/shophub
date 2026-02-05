@@ -1,6 +1,11 @@
-import Link from 'next/link';
+"use client";
 
-const Footer = ({ dict }: { dict: any }) => {
+import Link from 'next/link';
+import { useLanguage, useLocalizedPath } from "@/context/LanguageContext";
+
+const Footer = () => {
+  const dict = useLanguage("footer");
+  const localize = useLocalizedPath();
   return (
     <footer className="bg-gray-900 text-white">
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -18,25 +23,25 @@ const Footer = ({ dict }: { dict: any }) => {
             <h4 className="mb-6 text-sm font-bold uppercase tracking-widest">{dict.sections.shop}</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
-                <Link href="/shop" className="transition-colors hover:text-white">
+                <Link href={localize("/shop")} className="transition-colors hover:text-white">
                   {dict.links.all_bags}
                 </Link>
               </li>
-              <li>
-                <Link href="/new-arrivals" className="transition-colors hover:text-white">
+              {/* <li>
+                <Link href={localize("/new-arrivals")} className="transition-colors hover:text-white">
                   {dict.links.new_arrivals}
                 </Link>
               </li>
               <li>
-                <Link href="/bestsellers" className="transition-colors hover:text-white">
+                <Link href={localize("/bestsellers")} className="transition-colors hover:text-white">
                   {dict.links.bestsellers}
                 </Link>
               </li>
               <li>
-                <Link href="/sale" className="transition-colors hover:text-white">
+                <Link href={localize("/sale")} className="transition-colors hover:text-white">
                   {dict.links.sale}
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -44,22 +49,22 @@ const Footer = ({ dict }: { dict: any }) => {
             <h4 className="mb-6 text-sm font-bold uppercase tracking-widest">{dict.sections.support}</h4>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
-                <Link href="/contact" className="transition-colors hover:text-white">
+                <Link href={localize("/contact")} className="transition-colors hover:text-white">
                   {dict.links.contact_us}
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="transition-colors hover:text-white">
+                <Link href={localize("/shipping")} className="transition-colors hover:text-white">
                   {dict.links.shipping_info}
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="transition-colors hover:text-white">
+                <Link href={localize("/returns")} className="transition-colors hover:text-white">
                   {dict.links.returns_exchanges}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="transition-colors hover:text-white">
+                <Link href={localize("/faq")} className="transition-colors hover:text-white">
                   {dict.links.faq}
                 </Link>
               </li>
@@ -116,16 +121,16 @@ const Footer = ({ dict }: { dict: any }) => {
         <div className="mt-12 border-t border-gray-800 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-gray-400">
-              {dict.footer.copyright.replace("{year}", new Date().getFullYear())}
+              {dict.footer.copyright.replace("{year}", String(new Date().getFullYear()))}
             </p>
             <div className="flex gap-6 text-sm text-gray-400">
-              <Link href="/privacy" className="transition-colors hover:text-white">
+              <Link href={localize("/privacy")} className="transition-colors hover:text-white">
                 {dict.links.privacy_policy}
               </Link>
-              <Link href="/terms" className="transition-colors hover:text-white">
+              <Link href={localize("/terms")} className="transition-colors hover:text-white">
                 {dict.links.terms_of_service}
               </Link>
-              <Link href="/cookies" className="transition-colors hover:text-white">
+              <Link href={localize("/cookies")} className="transition-colors hover:text-white">
                 {dict.links.cookie_policy}
               </Link>
             </div>

@@ -1,9 +1,13 @@
-import { listProducts } from "../../../lib/products";
-import AdminCreateProductForm from "../../../components/AdminCreateProductForm";
-import AdminProductRow from "../../../components/AdminProductRow";
+import { listProducts } from "@/lib/products";
+import AdminCreateProductForm from "@/components/admin/AdminCreateProductForm";
+import AdminProductRow from "@/components/admin/AdminProductRow";
+import Link from "next/link";
+import type { Locale } from "@config";
+import { withLocalePath } from "@/lib/locale-path";
 
-export default async function AdminPage() {
+export default async function AdminPage({ params }: { params: { locale: Locale } }) {
   const products = await listProducts();
+  const { locale } = params;
 
   return (
     <main className="min-h-screen bg-white">
@@ -12,12 +16,12 @@ export default async function AdminPage() {
           <div className="text-sm text-black/60">Admin</div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         </div>
-        <a
-          href="/shop"
+        <Link
+          href={withLocalePath("/shop", locale)}
           className="px-4 py-2 rounded-xl border border-black/10 hover:bg-black/5"
         >
           View Shop
-        </a>
+        </Link>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 pb-14 grid grid-cols-1 lg:grid-cols-2 gap-10">

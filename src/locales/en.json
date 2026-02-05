@@ -59,11 +59,59 @@
       "learn_more": "Learn More"
     },
     "stats": [
-      { "value": "5K+", "label": "Happy Customers" },
       { "value": "4.9★", "label": "Average Rating" },
       { "value": "100%", "label": "Premium Quality" },
       { "value": "2-3", "label": "Days Delivery" }
     ]
+  },
+  "shop": {
+    "hero_description": "Discover handpicked bags designed to elevate your style. Each piece combines elegance with functionality.",
+    "new_arrivals": "New Arrivals",
+    "best_sellers": "Best Sellers",
+    "happy_customers": "Happy Customers",
+    "average_rating": "Average Rating",
+    "premium_quality": "Premium Quality",
+    "days_delivery": "Days Delivery"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "empty_title": "Cart Is Empty",
+    "empty_desc": "Add items to your cart before checking out.",
+    "continue_shopping": "Continue Shopping",
+    "contact_information": "Contact Information",
+    "full_name": "Full Name",
+    "phone_number": "Phone Number",
+    "email_optional": "Email (Optional)",
+    "shipping_address": "Shipping Address",
+    "street_address": "Street Address",
+    "city": "City",
+    "postal_code": "Postal Code",
+    "order_notes_optional": "Order Notes (Optional)",
+    "notes_placeholder": "Special delivery instructions...",
+    "processing": "Processing...",
+    "place_order": "Place Order",
+    "order_summary": "Order Summary",
+    "qty": "Qty",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "free": "Free",
+    "total": "Total",
+    "currency": "MAD",
+    "secure_checkout": "Secure checkout",
+    "free_shipping_all_items": "Free shipping for all items",
+    "returns_7_days": "7-day returns",
+    "order_failed": "Order failed. Please try again.",
+    "error_occurred": "An error occurred. Please try again."
+  },
+  "order_success": {
+    "title": "Order Confirmed!",
+    "description": "Thank you for your order. We've received your order and will contact you shortly to confirm the details.",
+    "call_within_24h": "We'll call you within 24 hours",
+    "delivery_eta": "Delivery in 2-3 business days",
+    "back_to_home": "Back to Home",
+    "continue_shopping": "Continue Shopping",
+    "need_help": "Need help? Contact us at +212 600 000 000"
   },
   "product_card": {
     "no_image": "No Image",
@@ -71,7 +119,16 @@
     "add_to_cart": "Add to Cart",
     "added": "Added",
     "rating": "(4.5)",
-    "currency": "MAD"
+    "currency": "MAD",
+    "free_shipping": "Free Shipping"
+  },
+  "pagination": {
+    "nav_aria": "Pagination",
+    "previous": "Prev",
+    "next": "Next",
+    "previous_page_aria": "Previous page",
+    "next_page_aria": "Next page",
+    "page_aria": "Page {page}"
   },
 
   "footer": {
@@ -119,11 +176,20 @@
       "features": [
         { "icon": "M5 13l4 4L19 7", "text": "Premium quality materials" },
         { "icon": "M5 13l4 4L19 7", "text": "Expert craftsmanship" },
-        { "icon": "M5 13l4 4L19 7", "text": "Free shipping over 500 MAD" },
-        { "icon": "M5 13l4 4L19 7", "text": "30-day returns guarantee" }
+        { "icon": "M5 13l4 4L19 7", "text": "Free shipping for all items" },
+        { "icon": "M5 13l4 4L19 7", "text": "7-day returns guarantee" }
       ],
       "favorite": "Favorite",
+      "save": "Save",
       "share": "Share",
+      "share_modal": {
+        "share": "Share",
+        "share_this_product": "Share this product",
+        "share_via_app": "Share via app",
+        "copy_link": "Copy link",
+        "link_copied": "Link copied ✔",
+        "whatsapp": "WhatsApp"
+      },
       "guarantees": [
         { "icon": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", "label": "Secure" },
         { "icon": "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", "label": "Gift Wrap" },

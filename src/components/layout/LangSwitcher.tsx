@@ -1,10 +1,11 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { type Locale } from "../../i18n.config";
-import { GlobeIcon, Check } from "lucide-react";
+import { type Locale } from "@config";
+import { Check, Globe } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "flag-icons/css/flag-icons.min.css";
+import { useLocale } from "@/context/LanguageContext";
+import Button from "@/components/ui/Button";
 
 const LANGS: Array<{
   locale: Locale;
@@ -13,44 +14,21 @@ const LANGS: Array<{
   shortcut: string;
 }> = [
   { locale: "ar", label: "العربية", flag: "fi-ma", shortcut: "AR" },
-  { locale: "en", label: "English", flag: "fi-sh", shortcut: "EN" },
+  { locale: "en", label: "English", flag: "fi-gb", shortcut: "EN" },
   { locale: "fr", label: "Français", flag: "fi-fr", shortcut: "FR" }
 ];
 
-function replaceLocaleInPath(pathname: string, newLocale: Locale) {
-  const parts = pathname.split("/").filter(Boolean);
-
-  if (parts.length > 0 && (parts[0] === "en" || parts[0] === "fr" || parts[0] === "ar")) {
-    parts[0] = newLocale;
-  } else {
-    parts.unshift(newLocale);
-  }
-
-  return "/" + parts.join("/");
-}
-
-export default function LanguageSwitcher({
-  currentLocale,
-}: {
-  currentLocale: Locale;
-}) {
-  const pathname = usePathname() || "/";
-  const router = useRouter();
+export default function LanguageSwitcher({ className }: { className?: string }) {
+  const { locale, switchLanguage } = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
 
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const current = useMemo(
-    () => LANGS.find((l) => l.locale === currentLocale) ?? LANGS[0],
-    [currentLocale]
+    () => LANGS.find((l) => l.locale === locale) ?? LANGS[0],
+    [locale]
   );
-
-  function changeLanguage(newLocale: Locale) {
-    if (newLocale === currentLocale) return;
-    const newPath = replaceLocaleInPath(pathname, newLocale);
-    router.push(newPath);
-    setOpen(false);
-  }
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -73,43 +51,51 @@ export default function LanguageSwitcher({
 
   return (
     <div className="relative" ref={menuRef}>
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors hover:border-gray-900 hover:bg-gray-50"
+        className="inline-flex items-center gap-2 rounded-sm text-black px-2 py-2 font-medium transition-colors lg:bg-white hover:bg-gray-400 sm:px-3"
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <span className="hidden sm:inline"><span className={`fi ${current.flag}`} ></span></span>
-        <span className="hidden font-bold uppercase tracking-wide sm:inline">{current.shortcut}</span>
-      </button>
+        <Globe className={`h-6 w-6 sm:hidden ${className ?? ""}`} />
+        <span className="hidden sm:inline">
+          <span className={`fi ${current.flag}`} />
+        </span>
+        <span className="hidden font-bold uppercase tracking-wide sm:inline">
+          {current.shortcut}
+        </span>
+      </Button>
 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-48 overflow-hidden border border-gray-200 bg-white shadow-lg"
+          className={`absolute ${dir === "rtl" ? "left-0" : "right-0"} z-50 mt-2 w-44 overflow-hidden border border-gray-200 bg-white shadow-lg sm:w-48`}
         >
           <div className="p-1">
             {LANGS.map((lang) => {
-              const active = lang.locale === currentLocale;
+              const active = lang.locale === locale;
               return (
-                <button
+                <Button
                   key={lang.locale}
                   type="button"
                   role="menuitem"
-                  onClick={() => changeLanguage(lang.locale)}
+                  onClick={() => {
+                    switchLanguage(lang.locale);
+                    setOpen(false);
+                  }}
                   className={`flex w-full items-center justify-between px-3 py-2.5 text-sm transition-colors ${
                     active ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  <span className="flex items-center gap-3">
-                    <span className={`fi ${lang.flag}`} ></span>
-                    <span className={`font-medium ${lang.locale === "ar" ? "text-right" : ""}`}>
+                  <span className="flex items-center gap-2 sm:gap-3">
+                    <span className={`fi ${lang.flag} text-base sm:text-lg`} />
+                    <span className={`text-sm font-medium sm:text-base ${lang.locale === "ar" ? "text-right" : ""}`}>
                       {lang.label}
                     </span>
                   </span>
                   {active && <Check className="h-4 w-4" />}
-                </button>
+                </Button>
               );
             })}
           </div>

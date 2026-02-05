@@ -1,9 +1,20 @@
 import { Client, Databases, Storage } from "node-appwrite";
 
+function requiredEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required env var: ${key}`);
+  }
+  if (value.startsWith("replace-with-")) {
+    throw new Error(`Invalid placeholder value for env var: ${key}`);
+  }
+  return value;
+}
+
 export function createAppwriteServer() {
-  const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
-  const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!;
-  const apiKey = process.env.NEXT_PUBLIC_APPWRITE_API_KEY!;
+  const endpoint = requiredEnv("APPWRITE_ENDPOINT");
+  const projectId = requiredEnv("APPWRITE_PROJECT_ID");
+  const apiKey = requiredEnv("APPWRITE_API_KEY");
 
   const client = new Client()
     .setEndpoint(endpoint)

@@ -59,11 +59,59 @@
       "learn_more": "En savoir plus"
     },
     "stats": [
-      { "value": "5K+", "label": "Clients satisfaits" },
       { "value": "4.9★", "label": "Note moyenne" },
       { "value": "100%", "label": "Qualité premium" },
       { "value": "2-3", "label": "Jours de livraison" }
     ]
+  },
+  "shop": {
+    "hero_description": "Découvrez des sacs soigneusement sélectionnés pour sublimer votre style. Chaque pièce allie élégance et fonctionnalité.",
+    "new_arrivals": "Nouveautés",
+    "best_sellers": "Meilleures ventes",
+    "happy_customers": "Clientes satisfaites",
+    "average_rating": "Note moyenne",
+    "premium_quality": "Qualité premium",
+    "days_delivery": "Jours de livraison"
+  },
+  "checkout": {
+    "title": "Commander",
+    "empty_title": "Panier vide",
+    "empty_desc": "Ajoutez des articles à votre panier avant de commander.",
+    "continue_shopping": "Continuer vos achats",
+    "contact_information": "Informations de contact",
+    "full_name": "Nom complet",
+    "phone_number": "Numéro de téléphone",
+    "email_optional": "Email (Optionnel)",
+    "shipping_address": "Adresse de livraison",
+    "street_address": "Adresse",
+    "city": "Ville",
+    "postal_code": "Code postal",
+    "order_notes_optional": "Notes de commande (Optionnel)",
+    "notes_placeholder": "Instructions spéciales de livraison...",
+    "processing": "Traitement...",
+    "place_order": "Passer la commande",
+    "order_summary": "Résumé de commande",
+    "qty": "Qté",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "tax": "Taxe",
+    "free": "Gratuite",
+    "total": "Total",
+    "currency": "MAD",
+    "secure_checkout": "Paiement sécurisé",
+    "free_shipping_all_items": "Livraison gratuite pour tous les articles",
+    "returns_7_days": "Retours sous 7 jours",
+    "order_failed": "Échec de la commande. Veuillez réessayer.",
+    "error_occurred": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "order_success": {
+    "title": "Commande confirmée !",
+    "description": "Merci pour votre commande. Nous l'avons bien reçue et nous vous contacterons bientôt pour confirmer les détails.",
+    "call_within_24h": "Nous vous appellerons sous 24 heures",
+    "delivery_eta": "Livraison sous 2 à 3 jours ouvrés",
+    "back_to_home": "Retour à l'accueil",
+    "continue_shopping": "Continuer vos achats",
+    "need_help": "Besoin d'aide ? Contactez-nous au +212 600 000 000"
   },
   "product_card": {
     "no_image": "Pas d'image",
@@ -71,7 +119,16 @@
     "add_to_cart": "Ajouter au panier",
     "added": "Ajouté",
     "rating": "(4,5)",
-    "currency": "MAD"
+    "currency": "MAD",
+    "free_shipping": "Livraison gratuite"
+  },
+  "pagination": {
+    "nav_aria": "Pagination",
+    "previous": "Préc.",
+    "next": "Suiv.",
+    "previous_page_aria": "Page précédente",
+    "next_page_aria": "Page suivante",
+    "page_aria": "Page {page}"
   },
 
   "product": {
@@ -85,11 +142,20 @@
       "features": [
         { "icon": "M5 13l4 4L19 7", "text": "Matériaux de qualité premium" },
         { "icon": "M5 13l4 4L19 7", "text": "Artisanat expert" },
-        { "icon": "M5 13l4 4L19 7", "text": "Livraison gratuite au-dessus de 500 MAD" },
-        { "icon": "M5 13l4 4L19 7", "text": "Garantie de retour sous 30 jours" }
+        { "icon": "M5 13l4 4L19 7", "text": "Livraison gratuite pour tous les articles" },
+        { "icon": "M5 13l4 4L19 7", "text": "Garantie de retour sous 7 jours" }
       ],
       "favorite": "Favoris",
+      "save": "Enregistrer",
       "share": "Partager",
+      "share_modal": {
+        "share": "Partager",
+        "share_this_product": "Partager ce produit",
+        "share_via_app": "Partager via l'application",
+        "copy_link": "Copier le lien",
+        "link_copied": "Lien copié ✔",
+        "whatsapp": "WhatsApp"
+      },
       "guarantees": [
         { "icon": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", "label": "Sécurisé" },
         { "icon": "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", "label": "Emballage Cadeau" },

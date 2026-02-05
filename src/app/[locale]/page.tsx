@@ -1,21 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import ProductCard from "../../components/ProductCard";
-import { listProducts } from "../../lib/products";
-import type { Locale } from '../../../i18n.config';
-import { getDictionary } from "components/lib/dictionaries";
+import ProductCard from "@/components/product/ProductCard";
+import { listProducts } from "@/lib/products";
+import type { Locale } from '@config';
+import { getDictionary } from "@/lib/dictionaries";
+import { withLocalePath } from "@/lib/locale-path";
+import ScrollToCollectionButton from "@/components/layout/ScrollToCollectionButton";
 
 export default async function HomePage({ params }: { params: { locale: Locale } }) {
   const products = await listProducts();
   const { locale } = await params;
   const j = await getDictionary(locale);
   const dict = j.home;
-  const productCardDict = j.product_card;
 
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section - Adidas Style */}
-      <section className="relative h-[85vh] min-h-160 overflow-hidden bg-gray-900">
+      <section className="relative lg:h-[85vh] h-screen min-h-160 overflow-hidden bg-gray-900">
         {/* Full-bleed Hero Image */}
         <div className="absolute inset-0">
           <Image
@@ -26,14 +27,17 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             priority
             quality={100}
           />
+
+          <div className="absolute inset-0 bg-black/30" />
+
           {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
         </div>
 
         {/* Hero Content */}
-        <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-6 pb-16 md:pb-20">
-          <div className="max-w-2xl">
+        <div className="relative mx-auto flex h-full max-w-7xl flex-col lg:justify-end justify-center px-6 pb-16 md:pb-20">
+          <div className="max-w-2xl mt-20 lg:mt-0">
             {/* Small badge */}
             <div className="mb-4 inline-block rounded bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white backdrop-blur-sm">
               {dict.hero.badge}
@@ -51,30 +55,29 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
 
             {/* Category Chips - Adidas style */}
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/shop/women"
+              <ScrollToCollectionButton
+                label={dict.hero.shop_women}
                 className="group relative overflow-hidden rounded-sm bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-900 transition-all hover:bg-gray-100"
-              >
-                <span className="relative z-10">{dict.hero.shop_women}</span>
-              </Link>
-              <Link
-                href="/shop/new"
+              />
+
+              {/* <Link
+                href={withLocalePath("/shop/new", locale)}
                 className="group relative overflow-hidden rounded-sm border-2 border-white bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-all hover:bg-white hover:text-gray-900"
               >
                 <span className="relative z-10">{dict.hero.new_in}</span>
               </Link>
               <Link
-                href="/shop/sale"
+                href={withLocalePath("/shop/sale", locale)}
                 className="group relative overflow-hidden rounded-sm border-2 border-white/50 bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-all hover:border-white hover:bg-white/10"
               >
                 <span className="relative z-10">{dict.hero.sale}</span>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+        <div className="absolute lg:bottom-6 bottom-2 left-1/2 -translate-x-1/2">
           <div className="flex flex-col items-center gap-2 text-white/60">
             <span className="text-xs font-medium uppercase tracking-widest">{dict.hero.scroll}</span>
             <svg className="h-6 w-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,9 +93,9 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           <div className="flex items-center gap-2 overflow-x-auto">
             <span className="text-sm font-bold uppercase tracking-wide text-gray-900">{dict.quick_links.popular}:</span>
             {dict.quick_links.categories.map((item: string) => (
-              <Link
-                key={item}
-                href={`/shop/${item.toLowerCase().replace(' ', '-')}`}
+                <Link
+                  key={item}
+                  href={withLocalePath(`/shop/${item.toLowerCase().replace(' ', '-')}`, locale)}
                 className="whitespace-nowrap rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-900 hover:bg-gray-50"
               >
                 {item}
@@ -116,7 +119,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
               </p>
             </div>
             <Link
-              href="/shop"
+              href={withLocalePath("/shop", locale)}
               className="hidden text-sm font-bold uppercase tracking-wide text-gray-900 underline underline-offset-4 transition hover:text-gray-600 md:block"
             >
               {dict.collection.view_all}
@@ -125,12 +128,11 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
 
           {/* Products Grid */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard
                   key={product.$id}
                   product={product}
-                  dict={productCardDict}
                 />
               ))}
             </div>
@@ -164,12 +166,12 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             <p className="mb-8 text-lg text-gray-700">
               {dict.sustainability.subheadline}
             </p>
-            <Link
-              href="/sustainability"
+            {/* <Link
+              href={withLocalePath("/sustainability", locale)}
               className="inline-block rounded-sm bg-gray-900 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-gray-800"
             >
               {dict.sustainability.learn_more}
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
@@ -177,13 +179,19 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
       {/* Stats Bar */}
       <section className="border-y border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-12">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {dict.stats.map((stat: { value: string; label: string }, index: number) => (
-              <div key={index} className="text-center">
-                <div className="mb-1 text-3xl font-black text-gray-900">{stat.value}</div>
-                <div className="text-sm uppercase tracking-wide text-gray-600">{stat.label}</div>
-              </div>
-            ))}
+          <div className="flex flex-row flex-wrap items-center justify-around">
+            {dict.stats.map(
+              (stat: { value: string; label: string }, index: number) => (
+                <div key={index} className="text-center">
+                  <div className="mb-1 text-3xl font-black text-gray-900">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm uppercase tracking-wide text-gray-600">
+                    {stat.label}
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>

@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Menu, X } from 'lucide-react';
-import CartSidebar from './CartSidebar';
+import { ShoppingCart } from 'lucide-react';
+import CartSidebar from "@/components/cart/CartSidebar";
 import LanguageSwitcher from './LangSwitcher';
+import Button from "@/components/ui/Button";
+import { useLanguage, useLocale, useLocalizedPath } from "@/context/LanguageContext";
 
-const Header = ({locale, dict}: {locale: 'en' | 'fr' | 'ar'; dict: any}) => {
+const Header = () => {
+  const { locale } = useLocale();
+  const header = useLanguage("header");
+  const localize = useLocalizedPath();
   const [scrollY, setScrollY] = useState(0);
   const [openCart, setOpenCart] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
   const [itemsInCart, setItemsInCart] = useState(0);
 
   const getCartCount = () => {
@@ -67,37 +71,31 @@ const Header = ({locale, dict}: {locale: 'en' | 'fr' | 'ar'; dict: any}) => {
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="text-2xl font-black uppercase tracking-tight text-gray-900">
+            <Link href={localize("/")} className="text-2xl font-black uppercase tracking-tight text-gray-900">
               Elegance
             </Link>
 
             <div className="flex items-center gap-4">
-              <LanguageSwitcher currentLocale={locale} />
+              <LanguageSwitcher className={`${
+                  scrollY > 20 ? 'text-gray-900' : 'text-white hover:text-gray-200'  
+                } lg:text-gray-900 hover:text-gray-700
+              `} />
 
-              <button
+              <Button
                 onClick={() => setOpenCart(true)}
-                className="relative rounded-sm p-2 transition-colors hover:bg-gray-100"
-                aria-label="Shopping cart"
+                className="relative rounded-sm p-2 transition-colors hover:bg-gray-400 cursor-pointer"
+                aria-label={header.cart.title}
               >
-                <ShoppingCart className="h-5 w-5 text-gray-900" />
+                <ShoppingCart className={`h-6 w-6 ${
+                    scrollY > 20 ? 'text-gray-900' : 'text-white'  
+                  } lg:text-gray-900 hover:text-gray-700
+                `} />
                 {itemsInCart > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">
                     {itemsInCart > 9 ? '9+' : itemsInCart}
                   </span>
                 )}
-              </button>
-
-              <button
-                onClick={() => setOpenMenu(!openMenu)}
-                className="rounded-sm p-2 transition-colors hover:bg-gray-100 md:hidden"
-                aria-label="Menu"
-              >
-                {openMenu ? (
-                  <X className="h-5 w-5 text-gray-900" />
-                ) : (
-                  <Menu className="h-5 w-5 text-gray-900" />
-                )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -105,7 +103,6 @@ const Header = ({locale, dict}: {locale: 'en' | 'fr' | 'ar'; dict: any}) => {
 
       <CartSidebar 
         locale={locale}
-        dict={dict.cart}
         isOpen={openCart} 
         onClose={() => {
           setOpenCart(false);

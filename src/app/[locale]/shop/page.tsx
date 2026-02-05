@@ -1,83 +1,122 @@
-import ProductCard from "../../../components/ProductCard";
-import { listProducts } from "../../../lib/products";
+import ProductCard from "@/components/product/ProductCard";
+import { listProducts } from "@/lib/products";
 import Link from "next/link";
-import type { Locale } from "../../../../i18n.config";
-import { getDictionary } from "components/lib/dictionaries";
+import type { Locale } from "@config";
+import { getDictionary } from "@/lib/dictionaries";
+import { withLocalePath } from "@/lib/locale-path";
+import Pagination from "@/components/Pagination ";
 
-export default async function ShopPage({
+const PRODUCTS_PER_PAGE = 12;
+
+export default async function ShopPage({ 
   params,
-}: {
-  params: { locale: Locale };
+  searchParams 
+}: { 
+  params: Promise<{ locale: Locale }> | { locale: Locale };
+  searchParams: Promise<{ page?: string }> | { page?: string };
 }) {
-  const products = await listProducts();
-  const { locale } = params;
-  const j = await getDictionary(locale);
-  const productCardDict = j.product_card;
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+  const allProducts = await listProducts();
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  const homeCopy = dictionary.home;
+  const productCopy = dictionary.product.product;
+  const shopCopy = dictionary.shop;
+
+  const currentPage = Number(resolvedSearchParams.page) || 1;
+  const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const products = allProducts.slice(startIndex, endIndex);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50">
+    <main className="min-h-screen bg-white pt-14 md:pt-16">
       {/* Hero Section */}
-      <section className="mx-auto max-w-7xl px-6 py-12 md:py-16">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 bg-clip-text text-transparent mb-4">
-            Our Collection
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover handpicked bags designed to elevate your style. Each piece combines elegance with functionality.
-          </p>
-        </div>
-
-        {/* Filter Bar */}
-        <div className=" bg-white rounded-2xl shadow-sm border border-rose-100/50 p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <span className="font-medium text-gray-700">{products.length}</span>
-            <span className="text-gray-600">Products</span>
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
+          <div className="mb-8 text-center">
+            <h1 className="mb-4 text-4xl font-black uppercase tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
+              {homeCopy.collection.title}
+            </h1>
+            <p className="mx-auto max-w-2xl text-sm text-gray-600 md:text-base">
+              {shopCopy.hero_description}
+            </p>
           </div>
-          
-          <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-medium text-sm hover:shadow-lg transition-all duration-300">
-              All Bags
-            </button>
-            {/* <button className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:border-rose-600 hover:text-rose-600 transition-colors">
-              New Arrivals
-            </button>
-            <button className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium text-sm hover:border-rose-600 hover:text-rose-600 transition-colors">
-              Best Sellers
-            </button> */}
+
+          {/* Filter Bar */}
+          <div className="flex flex-col items-center justify-between gap-4 border-y border-gray-200 py-4 sm:flex-row">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-black text-gray-900">{allProducts.length}</span>
+              <span className="uppercase tracking-wide text-gray-600">
+                {homeCopy.collection.items}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              <button className="rounded-sm border border-gray-900 bg-gray-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800 sm:px-6 sm:py-2.5 sm:text-sm">
+                {homeCopy.collection.view_all}
+              </button>
+              <button className="rounded-sm border border-gray-300 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-gray-700 transition-colors hover:border-gray-900 hover:bg-gray-50 sm:px-6 sm:py-2.5 sm:text-sm">
+                {shopCopy.new_arrivals}
+              </button>
+              <button className="rounded-sm border border-gray-300 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-gray-700 transition-colors hover:border-gray-900 hover:bg-gray-50 sm:px-6 sm:py-2.5 sm:text-sm">
+                {shopCopy.best_sellers}
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Products Grid */}
-      <section className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((p) => (
-            <ProductCard key={p.$id} product={p} dict={productCardDict} />
-          ))}
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
+        {products.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+              {products.map((p) => (
+                <ProductCard key={p.$id} product={p} />
+              ))}
+            </div>
 
-        {/* Empty State */}
-        {products.length === 0 && (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-12">
+                <Pagination 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  locale={locale}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          /* Empty State */
+          <div className="py-20 text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 md:h-20 md:w-20">
+              <svg
+                className="h-8 w-8 text-gray-400 md:h-10 md:w-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
               </svg>
             </div>
-            <h3 className="text-2xl font-serif font-bold text-gray-800 mb-3">
-              No Products Yet
+            <h3 className="mb-3 text-2xl font-black uppercase text-gray-900 md:text-3xl">
+              {homeCopy.collection.coming_soon}
             </h3>
-            <p className="text-gray-600 mb-8">
-              Our collection is being curated. Check back soon for beautiful bags!
+            <p className="mb-8 text-sm text-gray-600 md:text-base">
+              {homeCopy.collection.launching_soon}
             </p>
             <Link
-              href="/"
-              className="inline-block px-8 py-3 rounded-full bg-gradient-to-r from-rose-600 to-pink-600 text-white font-semibold hover:shadow-xl hover:scale-105 transition-all duration-300"
+              href={withLocalePath("/", locale)}
+              className="inline-block rounded-sm bg-gray-900 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-all hover:bg-gray-800 md:px-8 md:py-4"
             >
-              Back to Home
+              {productCopy.home}
             </Link>
           </div>
         )}

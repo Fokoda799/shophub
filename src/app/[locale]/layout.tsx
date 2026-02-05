@@ -1,8 +1,8 @@
 import "./globals.css";
 import { DM_Sans, Playfair_Display } from "next/font/google";
-import { i18n, type Locale } from "../../../i18n.config";
-import Shell from "../../components/Shell";
-import { getDictionary } from "../../lib/dictionaries";
+import { i18n, type Locale } from "@config";
+import Shell from "@/components/layout/Shell";
+import { getDictionary } from "@/lib/dictionaries";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -34,13 +34,15 @@ export default async function RootLayout({ children, params }: LayoutProps) {
   const { locale: localeParam } = await params;
   const locale: Locale = isLocale(localeParam) ? localeParam : i18n.defaultLocale;
 
-  const dict = await getDictionary(locale);
+  const dictionary = await getDictionary(locale);
   const dir = i18n.dir(locale);
 
   return (
     <html lang={locale} dir={dir}>
       <body className={`${dmSans.variable} ${playfair.variable}`}>
-        <Shell dict={dict}>{children}</Shell>
+        <Shell locale={locale} dictionary={dictionary}>
+          {children}
+        </Shell>
       </body>
     </html>
   );

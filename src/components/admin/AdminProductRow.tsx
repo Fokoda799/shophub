@@ -1,12 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ProductDoc } from "../lib/products";
-import { deleteProductAction, updateProductAction } from "../app/[locale]/admin/actions";
+import Link from "next/link";
+import type { ProductDoc } from "@/lib/products";
+import { deleteProductAction, updateProductAction } from "@/app/[locale]/admin/actions";
+import { useLocalizedPath } from "@/context/LanguageContext";
+import Button from "@/components/ui/Button";
 
 export default function AdminProductRow({ product }: { product: ProductDoc }) {
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState<string>("");
+  const localize = useLocalizedPath();
 
   const editRef = useRef<HTMLFormElement | null>(null);
 
@@ -17,8 +21,9 @@ export default function AdminProductRow({ product }: { product: ProductDoc }) {
       formData.set("existingImageIds", JSON.stringify(product.imageFileIds ?? []));
       await updateProductAction(formData);
       setMsg("✅ Updated. Refresh the page to see changes.");
-    } catch (e: any) {
-      setMsg(`❌ ${e?.message ?? "Error"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Error";
+      setMsg(`❌ ${message}`);
     }
   }
 
@@ -31,8 +36,9 @@ export default function AdminProductRow({ product }: { product: ProductDoc }) {
       fd.set("imageIds", JSON.stringify(product.imageFileIds ?? []));
       await deleteProductAction(fd);
       setMsg("✅ Deleted. Refresh the page to see changes.");
-    } catch (e: any) {
-      setMsg(`❌ ${e?.message ?? "Error"}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Error";
+      setMsg(`❌ ${message}`);
     }
   }
 
@@ -47,18 +53,18 @@ export default function AdminProductRow({ product }: { product: ProductDoc }) {
         </div>
 
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => setOpen((v) => !v)}
             className="px-3 py-2 rounded-xl border border-black/10 hover:bg-black/5 text-sm"
           >
             {open ? "Close" : "Edit"}
-          </button>
-          <a
-            href={`/product/${product.$id}`}
+          </Button>
+          <Link
+            href={localize(`/product/${product.$id}`)}
             className="px-3 py-2 rounded-xl hover:bg-black/5 text-sm"
           >
             View
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -126,24 +132,24 @@ export default function AdminProductRow({ product }: { product: ProductDoc }) {
               </div>
             </div>
 
-            <button className="w-full px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90">
+            <Button className="w-full px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90">
               Save changes
-            </button>
+            </Button>
           </form>
 
           <div className="mt-3 flex flex-col sm:flex-row gap-2">
-            <button
+            <Button
               onClick={() => onDelete(false)}
               className="px-5 py-3 rounded-2xl border border-black/10 hover:bg-black/5 text-sm"
             >
               Delete product (keep images)
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => onDelete(true)}
               className="px-5 py-3 rounded-2xl bg-black text-white hover:opacity-90 text-sm"
             >
               Delete product + images
-            </button>
+            </Button>
           </div>
 
           {msg && (

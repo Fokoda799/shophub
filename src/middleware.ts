@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { i18n } from "../i18n.config";
+import { i18n } from "@config";
 
 function detectLocale(request: NextRequest): string {
   const acceptLanguage = request.headers.get("accept-language");
   if (!acceptLanguage) return i18n.defaultLocale;
 
   const preferred = acceptLanguage.split(",")[0]?.split("-")[0];
-  if (preferred && i18n.locales.includes(preferred as any)) {
+  if (preferred && (i18n.locales as readonly string[]).includes(preferred)) {
     return preferred;
   }
   return i18n.defaultLocale;
