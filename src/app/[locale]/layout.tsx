@@ -1,6 +1,6 @@
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { i18n, type Locale } from "@config";
-import { getDictionary } from "@/lib/dictionaries";
+import { getDictionary } from "@/features/i18n/dictionaries";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 const dmSans = DM_Sans({

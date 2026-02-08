@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { CheckCircle, Package, Home } from "lucide-react";
 import { useLanguage, useLocale } from "@/context/LanguageContext";
-import { withLocalePath } from "@/lib/locale-path";
+import { withLocalePath } from "@/features/i18n/routing";
 
 export default function OrderSuccessPage() {
   const { locale } = useLocale();

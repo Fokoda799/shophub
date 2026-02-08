@@ -1,5 +1,5 @@
-import { getProductById } from "@/lib/products";
-import { getPublicAppwriteImageUrl } from "@/lib/appwrite-client-urls";
+import { getProductById } from "@/services/products";
+import { getPublicAppwriteImageUrl } from "@/lib/appwrite/client";
 import type { Locale } from "@config";
 import ProductDetailsContent from "@/components/product/ProductDetailsContent";
 

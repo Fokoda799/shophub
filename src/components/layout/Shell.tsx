@@ -4,7 +4,7 @@ import { type Locale } from "@config";
 import Header from "./Header";
 import Footer from "./Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
-import type { Dictionary } from "@/lib/dictionary-types";
+import type { Dictionary } from "@/types/local";
 
 export default function Shell({
   children,

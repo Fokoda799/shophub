@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         pathname: "/v1/storage/**",
       },
     ],
+    qualities: [100, 70, 75],
   },
 };
 

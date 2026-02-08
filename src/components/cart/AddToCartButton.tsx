@@ -1,43 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import type { ProductDoc } from "@/lib/products";
+import { MouseEvent, useState } from "react";
+import { ProductDoc } from "@/types/product";
 import { useLanguage } from "@/context/LanguageContext";
+import { useCart } from "@/context/CartContext";
 import Button from "@/components/ui/Button";
+import { getPublicAppwriteImageUrl } from "@/lib/appwrite/client";
 
 export default function AddToCartButton({ product }: { product: ProductDoc }) {
   const copy = useLanguage("product_card");
   const [isAdding, setIsAdding] = useState(false);
+  const { addItem } = useCart();
+  
+  const handleAddToCart = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-  const handleAddToCart = () => {
     setIsAdding(true);
 
-    const key = `cart_item_${product.$id}`;
-    const existingRaw = localStorage.getItem(key);
-    let nextQuantity = 1;
-
-    if (existingRaw) {
-      try {
-        const existing = JSON.parse(existingRaw);
-        if (typeof existing?.quantity === "number") {
-          nextQuantity = existing.quantity + 1;
-        }
-      } catch {
-        nextQuantity = 1;
-      }
-    }
-
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        productId: product.$id,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        quantity: nextQuantity,
-        imageFileIds: product.imageFileIds,
-      })
-    );
+    addItem({
+      productId: product.$id,
+      title: product.title,
+      price: product.price,
+      quantity: 1,
+      image: product.imageFileIds?.[0]
+        ? getPublicAppwriteImageUrl(product.imageFileIds[0])
+        : null,
+    });
 
     window.dispatchEvent(new Event("cart:updated"));
 

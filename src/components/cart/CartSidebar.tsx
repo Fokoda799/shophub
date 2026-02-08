@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,19 +11,10 @@ import {
   X,
   Trash2,
 } from "lucide-react";
-import { getPublicAppwriteImageUrl } from "@/lib/appwrite-client-urls";
 import { useLanguage } from "@/context/LanguageContext";
 import Button from "@/components/ui/Button";
-import { withLocalePath } from "@/lib/locale-path";
-
-type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string | null;
-  variant?: string;
-};
+import { withLocalePath } from "@/features/i18n/routing";
+import { useCart } from "@/context/CartContext";
 
 type CartSidebarProps = {
   locale: 'en' | 'fr' | 'ar';
@@ -34,7 +25,7 @@ type CartSidebarProps = {
   tax?: number;
 };
 
-const FREE_SHIPPING_THRESHOLD = 500;
+// const FREE_SHIPPING_THRESHOLD = 500;
 
 const formatMoney = (value: number, currency: string, locale: string) =>
   new Intl.NumberFormat(locale, {
@@ -52,43 +43,11 @@ const CartSidebar = ({
   tax = 0,
 }: CartSidebarProps) => {
   const dict = useLanguage("header").cart;
-  const [items, setItems] = useState<CartItem[]>([]);
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const { items: cartItems, removeItem, updateQuantity } = useCart();
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + shipping + tax;
-  const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const timeoutId = window.setTimeout(() => {
-      const itemsLocal: CartItem[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("cart_item_")) {
-          const item = localStorage.getItem(key);
-          if (item) {
-            const parsedItem = JSON.parse(item);
-            itemsLocal.push({
-              id: parsedItem.productId,
-              name: parsedItem.title,
-              price: parsedItem.price,
-              quantity: parsedItem.quantity,
-              image: parsedItem.imageFileIds?.[0]
-                ? getPublicAppwriteImageUrl(parsedItem.imageFileIds[0])
-                : null,
-            });
-          }
-        }
-      }
-
-      setItems(itemsLocal);
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [isOpen]);
+  // const remainingForFree = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  // const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100); 
 
   useEffect(() => {
     if (!isOpen) return;
@@ -109,39 +68,15 @@ const CartSidebar = ({
   }, [isOpen]);
 
   const onRemove = (id: string) => {
-    const updatedItems = items.filter((item) => item.id !== id);
-    setItems(updatedItems);
-    localStorage.removeItem(`cart_item_${id}`);
+    removeItem(id);
     window.dispatchEvent(new Event("cart:updated"));
   };
 
   const onIncDec = (id: string, delta: number) => {
-    const updatedItems = items
-      .map((item) => {
-        if (item.id === id) {
-          const newQuantity = item.quantity + delta;
-          if (newQuantity <= 0) {
-            localStorage.removeItem(`cart_item_${id}`);
-            return null;
-          }
-          const updatedItem = { ...item, quantity: newQuantity };
-          localStorage.setItem(
-            `cart_item_${id}`,
-            JSON.stringify({
-              productId: updatedItem.id,
-              title: updatedItem.name,
-              price: updatedItem.price,
-              quantity: updatedItem.quantity,
-              imageFileIds: updatedItem.image ? [updatedItem.image] : [],
-            })
-          );
-          return updatedItem;
-        }
-        return item;
-      })
-      .filter((item): item is CartItem => item !== null);
-
-    setItems(updatedItems);
+    const item = cartItems.find((entry) => entry.productId === id);
+    if (!item) return;
+    const nextQuantity = Math.max(1, item.quantity + delta);
+    updateQuantity(id, nextQuantity);
     window.dispatchEvent(new Event("cart:updated"));
   };
 
@@ -183,7 +118,7 @@ const CartSidebar = ({
                   {dict.title}
                 </h2>
                 <p className="text-xs text-gray-500">
-                  {items.length} {items.length === 1 ? dict.item_singular : dict.item_plural}
+                  {cartItems.length} {cartItems.length === 1 ? dict.item_singular : dict.item_plural}
                 </p>
               </div>
             </div>
@@ -217,7 +152,7 @@ const CartSidebar = ({
             )} */}
 
             <div className="flex-1 px-6 py-6">
-              {items.length === 0 ? (
+              {cartItems.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                     <ShoppingBag className="h-8 w-8 text-gray-400" />
@@ -237,16 +172,16 @@ const CartSidebar = ({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {items.map((item) => (
+                  {cartItems.map((item) => (
                     <div
-                      key={item.id}
+                      key={item.productId}
                       className="flex gap-4 border-b border-gray-100 pb-4 last:border-0"
                     >
                       <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-gray-100">
                         {item.image ? (
                           <Image
                             src={item.image}
-                            alt={item.name}
+                            alt={item.title}
                             fill
                             className="object-cover"
                             sizes="96px"
@@ -261,24 +196,24 @@ const CartSidebar = ({
                         <div>
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-sm font-bold uppercase text-gray-900">
-                              {item.name}
+                              {item.title}
                             </h4>
                             <Button
-                              onClick={() => onRemove(item.id)}
+                              onClick={() => onRemove(item.productId)}
                               className="shrink-0 p-1 text-gray-400 transition-colors hover:text-gray-900"
                               aria-label={dict.remove_item_aria}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
-                          {item.variant && (
+                          {/* {item.variant && (
                             <p className="mt-1 text-xs text-gray-500">{item.variant}</p>
-                          )}
+                          )} */}
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Button
-                              onClick={() => onIncDec(item.id, -1)}
+                              onClick={() => onIncDec(item.productId, -1)}
                               className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
                               aria-label={dict.decrease_qty_aria}
                             >
@@ -288,7 +223,7 @@ const CartSidebar = ({
                               {item.quantity}
                             </span>
                             <Button
-                              onClick={() => onIncDec(item.id, 1)}
+                              onClick={() => onIncDec(item.productId, 1)}
                               className="flex h-8 w-8 items-center justify-center border border-gray-300 bg-white transition-colors hover:border-gray-900"
                               aria-label={dict.increase_qty_aria}
                             >
@@ -307,7 +242,7 @@ const CartSidebar = ({
             </div>
           </div>
 
-          {items.length > 0 && (
+          {cartItems.length > 0 && (
             <div className="shrink-0 border-t border-gray-200 bg-white px-6 py-6">
               <div className="mb-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">

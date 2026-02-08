@@ -1,6 +1,6 @@
 import 'server-only';
 import type { Locale } from '@config';
-import type { Dictionary } from './dictionary-types';
+import { Dictionary } from '@/types/local';
 
 const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
   en: () => import('@/locales/en.json').then((module) => module.default),

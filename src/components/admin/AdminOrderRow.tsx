@@ -11,8 +11,9 @@ import {
   Trash2,
   Clock
 } from "lucide-react";
-import type { OrderDoc, ItemDoc } from "@/app/[locale]/admin/order-actions";
-import { updateOrderStatus, deleteOrder, getOrder } from "@/app/[locale]/admin/order-actions";
+import { updateOrderStatus, deleteOrder, getOrder } from "@/actions/admin/orders";
+
+import { OrderDoc, OrderItemDoc } from "@/types/order";
 
 type Props = {
   order: OrderDoc;
@@ -30,7 +31,7 @@ const statusColors = {
 
 export default function AdminOrderRow({ order, onUpdate }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const [items, setItems] = useState<ItemDoc[]>([]);
+  const [items, setItems] = useState<OrderItemDoc[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -175,7 +176,7 @@ export default function AdminOrderRow({ order, onUpdate }: Props) {
                     Shipping Address
                   </h4>
                   <div className="flex items-start gap-2 text-sm text-gray-600">
-                    <MapPin className="h-3 w-3 mt-1 flex-shrink-0" />
+                    <MapPin className="h-3 w-3 mt-1 shrink-0" />
                     <div>
                       <p>{order.address}</p>
                       <p>{order.city}, {order.postalCode}</p>

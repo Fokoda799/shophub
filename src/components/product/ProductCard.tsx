@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import type { ProductDoc } from "@/lib/products";
-import { getPublicAppwriteImageUrl } from "@/lib/appwrite-client-urls";
+import { ProductDoc } from "@/types/product";
+import { getPublicAppwriteImageUrl } from "@/lib/appwrite/client";
 import { useEffect, useState } from "react";
 import { useLanguage, useLocalizedPath } from "@/context/LanguageContext";
-import { ShoppingBag } from "lucide-react";
-import Button from "../ui/Button";
+import AddToCartButton from "../cart/AddToCartButton";
 
 export default function ProductCard({ product }: { product: ProductDoc }) {
   const copy = useLanguage("product_card");
@@ -21,42 +20,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
       : null;
 
   const [seenFlag, setSeenFlag] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsAddingToCart(true);
-
-    const key = `cart_item_${product.$id}`;
-    const existingRaw = localStorage.getItem(key);
-    let nextQuantity = 1;
-
-    if (existingRaw) {
-      try {
-        const existing = JSON.parse(existingRaw);
-        if (typeof existing?.quantity === "number") {
-          nextQuantity = existing.quantity + 1;
-        }
-      } catch {}
-    }
-
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        productId: product.$id,
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        quantity: nextQuantity,
-        imageFileIds: product.imageFileIds,
-      })
-    );
-
-    window.dispatchEvent(new Event("cart:updated"));
-    setTimeout(() => setIsAddingToCart(false), 1000);
-  };
 
   const markAsSeen = () => {
     localStorage.setItem(
@@ -127,59 +91,10 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
 
           {/* DESKTOP ADD TO CART - Slide up on hover */}
           <div className="absolute bottom-0 left-0 right-0 hidden translate-y-full bg-white p-4 transition-transform duration-300 group-hover:translate-y-0 md:block">
-            <Button
-              onClick={handleAddToCart}
-              disabled={isAddingToCart}
-              className={`flex w-full items-center justify-center gap-2 rounded-sm py-3 text-sm font-bold uppercase tracking-wide text-white transition-all ${
-                isAddingToCart
-                  ? "bg-green-600 hover:bg-green-600"
-                  : "bg-gray-900 hover:bg-gray-800"
-              }`}
-            >
-              {isAddingToCart ? (
-                <>
-                  <svg
-                    className="h-4 w-4 animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {copy.added}
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                  {copy.add_to_cart}
-                </>
-              )}
-            </Button>
+            <AddToCartButton product={product} />
           </div>
         </div>
+                    
 
         {/* CONTENT */}
         <div className="p-3 sm:p-4 relative">
@@ -194,7 +109,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
               </p>
             )}
 
-            <div className="flex items-center gap-1 text-gray-500 bg-gradient-to-br from-rose-100 to-amber-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest ring-1 ring-black/5">
+            <div className="flex items-center gap-1 text-gray-500 bg-linear-to-br from-rose-100 to-amber-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest ring-1 ring-black/5">
               <svg
                 className="h-3.5 w-3.5"
                 fill="none"
@@ -234,45 +149,7 @@ export default function ProductCard({ product }: { product: ProductDoc }) {
 
           {/* MOBILE ADD TO CART */}
           <div className="mt-3 md:hidden">
-            <button
-              onClick={handleAddToCart}
-              disabled={isAddingToCart}
-              className={`flex w-full items-center justify-center gap-2 rounded-sm border-2 py-2.5 text-sm font-bold uppercase tracking-wide transition-all ${
-                isAddingToCart
-                  ? "border-green-600 bg-green-600 text-white"
-                  : "border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              {isAddingToCart ? (
-                <>
-                  <svg
-                    className="h-4 w-4 animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {copy.added}
-                </>
-              ) : (
-                <>
-                  <ShoppingBag className="h-4 w-4" />
-                  {copy.add_to_cart}
-                </>
-              )}
-            </button>
+            <AddToCartButton product={product} />
           </div>
         </div>
       </article>

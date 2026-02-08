@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { createProductAction } from "@/app/[locale]/admin/actions";
+import { createProductAction } from "@/actions/admin/products";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 import { Upload, X, Check, AlertCircle, Loader2 } from "lucide-react";
@@ -338,9 +338,9 @@ export default function AdminCreateProductForm() {
           `}
         >
           {msg.type === "success" ? (
-            <Check className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <Check className="h-5 w-5 shrink-0 mt-0.5" />
           ) : (
-            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
           )}
           <p className="text-sm font-medium">{msg.text}</p>
         </div>

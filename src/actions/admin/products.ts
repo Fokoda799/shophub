@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Permission, Role } from "node-appwrite";
-import { createAppwriteServer } from "@/lib/appwrite-server";
+import { createAppwriteServer } from "@/lib/appwrite/server";
 
 const databaseId = process.env.APPWRITE_DATABASE_ID!;
 const productsCollectionId = process.env.APPWRITE_PRODUCTS_COLLECTION_ID!;
@@ -74,7 +74,7 @@ export async function createProductAction(formData: FormData) {
 export async function listProductsAction() {
   const { databases } = createAppwriteServer();
   const res = await databases.listDocuments(databaseId, productsCollectionId);
-  return res.documents;
+  return res.documents as unknown;
 }
 
 /**

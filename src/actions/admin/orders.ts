@@ -1,37 +1,29 @@
 "use server";
 
-import { createAppwriteServer } from "@/lib/appwrite-server";
 import { Query } from "node-appwrite";
 
-const databaseId = process.env.APPWRITE_DATABASE_ID!;
-const ordersCollectionId = process.env.APPWRITE_ORDERS_COLLECTION_ID!;
-const itemsCollectionId = process.env.APPWRITE_ORDER_ITEMS_COLLECTION_ID!;
+import { createAppwriteServer } from "@/lib/appwrite/server";
+import { appwriteConfig } from "@/lib/appwrite/config";
 
-export type OrderDoc = {
-  $id: string;
-  orderNumber: string;
-  fullName: string;
-  phone: string;
-  email?: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  totalAmount: number;
-  notes?: string;
-  ipAddress: string;
-  userAgent: string;
-  sourceCountry: string;
-  status: "ordered" | "confirmed" | "processing" | "delivering" | "delivered" | "cancelled";
-  $createdAt: string;
-};
+import { OrderDoc, OrderItemDoc } from "@/types/order";
+import { castDocument, castDocuments } from "@/types/cast";
 
-export type ItemDoc = {
-  $id: string;
-  orders: string;
-  title: string;
-  price: number;
-  quantity: number;
-};
+const { databaseId, ordersCollectionId, orderItemsCollectionId } = appwriteConfig;
+
+
+async function listItemsForOrder(orderId: string) {
+  const { databases } = createAppwriteServer();
+
+  try {
+    return await databases.listDocuments(databaseId, orderItemsCollectionId, [
+      Query.equal("oreders", orderId),
+    ]);
+  } catch {
+    return await databases.listDocuments(databaseId, orderItemsCollectionId, [
+      Query.equal("oreders", orderId),
+    ]);
+  }
+}
 
 /**
  * List all orders with optional status filter
@@ -51,7 +43,7 @@ export async function listOrders(status?: string) {
     queries
   );
 
-  return result.documents;
+  return castDocuments<OrderDoc>(result.documents);
 }
 
 /**
@@ -67,15 +59,11 @@ export async function getOrder(orderId: string) {
   );
 
   // Get related items
-  const items = await databases.listDocuments(
-    databaseId, 
-    itemsCollectionId,
-    [Query.equal("oreders", orderId)]
-  );
+  const items = await listItemsForOrder(orderId);
 
   return {
-    order,
-    items: items.documents,
+    order: castDocument<OrderDoc>(order),
+    items: castDocuments<OrderItemDoc>(items.documents),
   };
 }
 
@@ -102,14 +90,10 @@ export async function deleteOrder(orderId: string) {
   const { databases } = createAppwriteServer();
 
   // First, delete all related items
-  const items = await databases.listDocuments(
-    databaseId,
-    itemsCollectionId,
-    [Query.equal("oreders", orderId)]
-  );
+  const items = await listItemsForOrder(orderId);
 
   for (const item of items.documents) {
-    await databases.deleteDocument(databaseId, itemsCollectionId, item.$id);
+    await databases.deleteDocument(databaseId, orderItemsCollectionId, item.$id);
   }
 
   // Then delete the order

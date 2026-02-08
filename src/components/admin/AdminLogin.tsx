@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Shield, Lock, User } from "lucide-react";
-import { createEmailPasswordSession, getCurrentAccount, deleteCurrentSession } from "@/lib/appwrite-browser-auth";
+import { createEmailPasswordSession, getCurrentAccount, deleteCurrentSession } from "@/lib/appwrite/client";
 
 type AdminUser = {
   email: string;
@@ -57,7 +57,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-white px-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-white px-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">

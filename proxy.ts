@@ -26,7 +26,7 @@ function getLocaleFromPathname(pathname: string) {
   return found ?? null;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
   // ✅ Skip Next internals, API, and static files
@@ -67,12 +67,9 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-  // query params are kept automatically because we cloned nextUrl
-
   return NextResponse.redirect(url);
 }
 
 export const config = {
-  // ✅ Match all routes except _next/static, _next/image, favicon, and API
   matcher: ["/((?!_next|api|favicon.ico).*)"],
 };

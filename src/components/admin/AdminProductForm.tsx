@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createProductAction } from "@/app/[locale]/admin/actions";
+import { createProductAction } from "@/actions/admin/products";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 

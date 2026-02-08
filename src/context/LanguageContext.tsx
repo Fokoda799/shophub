@@ -3,8 +3,8 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Locale } from "@config";
-import type { Dictionary, DictionaryKey } from "@/lib/dictionary-types";
-import { withLocalePath } from "@/lib/locale-path";
+import type { Dictionary, DictionaryKey } from "@/types/local";
+import { withLocalePath } from "@/features/i18n/routing";
 
 type LanguageContextValue = {
   locale: Locale;

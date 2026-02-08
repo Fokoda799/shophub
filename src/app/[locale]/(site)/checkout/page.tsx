@@ -1,27 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, Package, Truck } from "lucide-react";
-import { getPublicAppwriteImageUrl } from "@/lib/appwrite-client-urls";
+import { getPublicAppwriteImageUrl } from "@/lib/appwrite/client";
 import { useLanguage, useLocale } from "@/context/LanguageContext";
-import { withLocalePath } from "@/lib/locale-path";
+import { withLocalePath } from "@/features/i18n/routing";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
+import { useCart } from "@/context/CartContext";
 
-type CartItem = {
+type OrderItemForServer = {
   productId: string;
-  title: string;
-  price: number;
   quantity: number;
-  imageFileIds?: string[];
 };
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const t = useLanguage("checkout");
-  const [items, setItems] = useState<CartItem[]>([]);
+  const { items, clearCart } = useCart();
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -33,23 +32,10 @@ export default function CheckoutPage() {
     notes: "",
   });
 
-  useEffect(() => {
-    const cartItems: CartItem[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("cart_item_")) {
-        const item = localStorage.getItem(key);
-        if (item) {
-          cartItems.push(JSON.parse(item));
-        }
-      }
-    }
-    setItems(cartItems);
-  }, []);
-
+  // UI-only totals (do NOT send to server)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 0;
-  const tax = subtotal * 0; // 10% tax
+  const tax = subtotal * 0;
   const total = subtotal + shipping + tax;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,44 +43,45 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Create order object
-      const order = {
+      // ✅ Send ONLY productIds + quantities
+      const orderItemsForServer: OrderItemForServer[] = items
+        .map((it) => ({
+          productId: String(it.productId),
+          quantity: Number(it.quantity),
+        }))
+        .filter((it) => it.productId && Number.isFinite(it.quantity) && it.quantity > 0);
+
+      if (orderItemsForServer.length === 0) {
+        alert(t.empty_desc);
+        return;
+      }
+
+      // ✅ Payload: no client prices/totals
+      const orderPayload = {
         ...formData,
-        items,
-        subtotal,
-        shipping,
-        tax,
-        totalAmount: total,
+        items: orderItemsForServer,
+        // optional metadata (server can also compute date)
         orderDate: new Date().toISOString(),
       };
 
-      // Send to your API endpoint
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(order),
+        body: JSON.stringify(orderPayload),
       });
 
       if (response.ok) {
-        // Clear cart
-        items.forEach((item) => {
-          localStorage.removeItem(`cart_item_${item.productId}`);
-        });
+        // Clear cart (client)
+        clearCart();
         window.dispatchEvent(new Event("cart:updated"));
 
-        // Redirect to success page
         router.push(withLocalePath("/order-success", locale));
-      } else {b
+      } else {
         let message = t.order_failed;
         try {
           const errorPayload = await response.json();
-          if (errorPayload?.error) {
-            message = String(errorPayload.error);
-          }
-          console.error("Order API error:", {
-            status: response.status,
-            body: errorPayload,
-          });
+          if (errorPayload?.error) message = String(errorPayload.error);
+          console.error("Order API error:", { status: response.status, body: errorPayload });
         } catch (parseError) {
           console.error("Order API error: failed to parse response", parseError);
         }
@@ -109,10 +96,10 @@ export default function CheckoutPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   if (items.length === 0) {
@@ -267,37 +254,18 @@ export default function CheckoutPage() {
 
               {/* Submit Button */}
               <div
-                className="
-                  fixed bottom-0 left-0 z-40 w-full bg-white py-6 px-2 lg:p-0
-                  lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:bg-transparent
-                "
-                style={{ paddingBottom: "env(safe-area-inset-bottom)" }} // iOS safe area
+                className="fixed bottom-0 left-0 z-40 w-full bg-white py-6 px-2 lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:bg-transparent lg:p-0"
+                style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
               >
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="
-                    w-full flex items-center justify-center gap-2
-                    bg-gray-900 py-4 text-sm font-bold uppercase tracking-wide text-white
-                    transition-colors hover:bg-gray-800
-                    disabled:opacity-50
-                  "
+                  className="w-full flex items-center justify-center gap-2 bg-gray-900 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
                 >
                   {loading ? (
                     <>
-                      <svg
-                        className="h-5 w-5 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
+                      <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path
                           className="opacity-75"
                           fill="currentColor"
@@ -324,16 +292,15 @@ export default function CheckoutPage() {
                 {t.order_summary}
               </h2>
 
-              {/* Items */}
               <div className="mb-6 space-y-4">
                 {items.map((item) => {
-                  const imageUrl = item.imageFileIds?.[0]
-                    ? getPublicAppwriteImageUrl(item.imageFileIds[0])
+                  const imageUrl = item.image
+                    ? getPublicAppwriteImageUrl(item.image)
                     : null;
 
                   return (
                     <div key={item.productId} className="flex gap-4">
-                      <div className="h-16 w-16  relative overflow-hidden shrink-0 border border-gray-200 bg-gray-50">
+                      <div className="h-16 w-16 relative overflow-hidden shrink-0 border border-gray-200 bg-gray-50">
                         {imageUrl && (
                           <Image
                             src={imageUrl}
@@ -345,7 +312,9 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-bold text-gray-900">{item.title}</p>
-                        <p className="text-xs text-gray-500">{t.qty}: {item.quantity}</p>
+                        <p className="text-xs text-gray-500">
+                          {t.qty}: {item.quantity}
+                        </p>
                         <p className="text-sm font-bold text-gray-900">
                           {(item.price * item.quantity).toFixed(2)} {t.currency}
                         </p>
@@ -355,29 +324,31 @@ export default function CheckoutPage() {
                 })}
               </div>
 
-              {/* Totals */}
               <div className="space-y-2 border-t border-gray-200 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t.subtotal}</span>
-                  <span className="font-bold text-gray-900">{subtotal.toFixed(2)} {t.currency}</span>
+                  <span className="font-bold text-gray-900">
+                    {subtotal.toFixed(2)} {t.currency}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t.shipping}</span>
-                  <span className="font-bold text-gray-900">
-                    {t.free}
-                  </span>
+                  <span className="font-bold text-gray-900">{t.free}</span>
                 </div>
                 <div className="hidden justify-between text-sm">
                   <span className="text-gray-600">{t.tax}</span>
-                  <span className="font-bold text-gray-900">{tax.toFixed(2)} {t.currency}</span>
+                  <span className="font-bold text-gray-900">
+                    {tax.toFixed(2)} {t.currency}
+                  </span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-2 text-base">
                   <span className="font-black uppercase">{t.total}</span>
-                  <span className="text-xl font-black text-gray-900">{total.toFixed(2)} {t.currency}</span>
+                  <span className="text-xl font-black text-gray-900">
+                    {total.toFixed(2)} {t.currency}
+                  </span>
                 </div>
               </div>
 
-              {/* Trust Indicators */}
               <div className="mt-6 space-y-3 border-t border-gray-200 pt-6">
                 <div className="flex items-center gap-3 text-xs text-gray-600">
                   <ShieldCheck className="h-4 w-4" />

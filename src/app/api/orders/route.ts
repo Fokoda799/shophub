@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { createOrder } from "@/lib/order";
+import { createOrder } from "@/actions/site/checkout";
 
-const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
+const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL || "";
 
 type EmailOrderItem = {
   title?: string;
@@ -28,6 +28,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const formData = new FormData();
 
+    console.log("Received order data:", request.headers);
+
     const fields = [
       "fullName",
       "phone",
@@ -36,7 +38,6 @@ export async function POST(request: Request) {
       "city",
       "postalCode",
       "notes",
-      "totalAmount",
     ];
 
     for (const field of fields) {
@@ -46,11 +47,17 @@ export async function POST(request: Request) {
       }
     }
 
+    formData.set("ipAddress", 
+      request.headers.get("x-forwarded-for")?.
+      split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? "unknown");
+    formData.set("userAgent", request.headers.get("user-agent") ?? "unknown");
+    formData.set("sourceCountry", request.headers.get("x-country") ?? "unknown");
+
     formData.set("items", JSON.stringify(body?.items ?? []));
 
-    const result = await createOrder(formData, request.headers);
+    const result = await createOrder(formData);
 
-    await sendEmailNotification(body);
+    await sendEmailNotification({ ...body, items: result.items });
     
     return NextResponse.json(result, { status: 201 });
   } catch (error) {

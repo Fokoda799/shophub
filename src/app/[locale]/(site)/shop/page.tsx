@@ -1,10 +1,10 @@
-import ProductCard from "@/components/product/ProductCard";
-import { listProducts } from "@/lib/products";
+import ProductCard from "@/components/site/product/ProductCard";
+import { listProducts } from "@/services/products";
 import Link from "next/link";
 import type { Locale } from "@config";
-import { getDictionary } from "@/lib/dictionaries";
-import { withLocalePath } from "@/lib/locale-path";
-import Pagination from "@/components/Pagination ";
+import { getDictionary } from "@/features/i18n/dictionaries";
+import { withLocalePath } from "@/features/i18n/routing";
+import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 12;
 

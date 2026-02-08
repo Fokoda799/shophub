@@ -13,15 +13,19 @@ import {
   CheckCircle,
   Filter
 } from "lucide-react";
-import AdminLogin from "@/components/admin/AdminLogin";
+
+import { getOrderStats, listOrders } from "@/actions/admin/orders";
+import { listProductsAction } from "@/actions/admin/products";
+import { deleteCurrentSession, getCurrentAccount } from "@/lib/appwrite/client";
+
+import AdminLogin from "@/components/admin/auth/AdminLoginForm";
 import WelcomeMessage from "@/components/admin/WelcomeMessage";
-import AdminCreateProductForm from "@/components/admin/AdminCreateProductForm";
-import AdminProductRow from "@/components/admin/AdminProductRow";
-import AdminOrderRow from "@/components/admin/AdminOrderRow";
-import { listProductsAction } from "./actions";
-import { getOrderStats, listOrders, type OrderDoc } from "./order-actions";
-import type { ProductDoc } from "@/lib/products";
-import { deleteCurrentSession, getCurrentAccount } from "@/lib/appwrite-browser-auth";
+import AdminCreateProductForm from "@/components/admin/products/ProductForm";
+import AdminProductRow from "@/components/admin/products/ProductRow";
+import AdminOrderRow from "@/components/admin/orders/OrderRow";
+
+import { ProductDoc } from "@/types/product";
+import { OrderDoc } from "@/types/order";
 
 type TabType = "overview" | "products" | "orders";
 type AdminUser = {
@@ -58,7 +62,7 @@ export default function AdminDashboard() {
     setLoadingOrders(true);
     try {
       const ordersData = await listOrders(status);
-      setOrders(ordersData);
+      setOrders(ordersData as OrderDoc[]);
     } catch (error) {
       console.error("Failed to load orders:", error);
     } finally {

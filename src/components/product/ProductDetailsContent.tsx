@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import ImageGalleryZoom from "@/components/product/ImageGalleryZoom";
-import AddToCartButton from "@/components/cart/AddToCartButton";
+import ImageGalleryZoom from "@/components/site/product/ProductGallery";
+import AddToCartButton from "@/components/site/cart/AddToCartButton";
 import Button from "@/components/ui/Button";
-import type { ProductDoc } from "@/lib/products";
+import { ProductDoc } from "@/types/product";
 import { useLanguage, useLocale } from "@/context/LanguageContext";
 import ShareModal from "./ShareModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { urlFormat } from "@/lib/url-format";
 
 export default function ProductDetailsContent({
@@ -20,7 +20,11 @@ export default function ProductDetailsContent({
   const { locale } = useLocale();
   const t = useLanguage("product").product;
   const [openShareModal, setOpenShareModal] = useState(false);
-  const url = typeof window === "undefined" ? "" : urlFormat(window.location.href);
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setUrl(urlFormat(window.location.href));
+  }, []);
 
   return (
     <main className="min-h-screen bg-white pt-10">

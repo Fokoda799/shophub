@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import ProductCard from "@/components/product/ProductCard";
-import { listProducts } from "@/lib/products";
+import ProductCard from "@/components/site/product/ProductCard";
+import { listProducts } from "@/services/products";
 import type { Locale } from '@config';
-import { getDictionary } from "@/lib/dictionaries";
-import { withLocalePath } from "@/lib/locale-path";
+import { getDictionary } from "@/features/i18n/dictionaries";
+import { withLocalePath } from "@/features/i18n/routing";
 import ScrollToCollectionButton from "@/components/layout/ScrollToCollectionButton";
 
 export default async function HomePage({ params }: { params: { locale: Locale } }) {
@@ -31,8 +31,8 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           <div className="absolute inset-0 bg-black/30" />
 
           {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
         </div>
 
         {/* Hero Content */}
@@ -150,9 +150,9 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
       </section>
 
       {/* Secondary Full-width Banner */}
-      <section className="relative h-[60vh] min-h-[400px] overflow-hidden bg-gray-100">
+      <section className="relative h-[60vh] min-h-100 overflow-hidden bg-gray-100">
         <div className="absolute inset-0">
-          <div className="h-full w-full bg-gradient-to-br from-rose-100 to-amber-100" />
+          <div className="h-full w-full bg-linear-to-br from-rose-100 to-amber-100" />
         </div>
 
         <div className="relative mx-auto flex h-full max-w-7xl items-center px-6">

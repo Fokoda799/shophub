@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import type { ProductDoc } from "@/lib/products";
-import { deleteProductAction, updateProductAction } from "@/app/[locale]/admin/actions";
+import { ProductDoc } from "@/types/product";
+import { deleteProductAction, updateProductAction } from "@/actions/admin/products";
 import { useLocalizedPath } from "@/context/LanguageContext";
 import Button from "@/components/ui/Button";
 
