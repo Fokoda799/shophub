@@ -88,7 +88,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
       </section>
 
       {/* Quick Links Bar */}
-      <section className="border-b border-gray-200 bg-white">
+      {/* <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-6">
           <div className="flex items-center gap-2 overflow-x-auto">
             <span className="text-sm font-bold uppercase tracking-wide text-gray-900">{dict.quick_links.popular}:</span>
@@ -103,7 +103,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Collection Section */}
       <section id="collection" className="bg-white py-16 md:py-24">

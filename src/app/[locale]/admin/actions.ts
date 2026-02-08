@@ -71,6 +71,12 @@ export async function createProductAction(formData: FormData) {
   return { ok: true, id: doc.$id };
 }
 
+export async function listProductsAction() {
+  const { databases } = createAppwriteServer();
+  const res = await databases.listDocuments(databaseId, productsCollectionId);
+  return res.documents;
+}
+
 /**
  * UPDATE (fields + optionally images)
  * - You can choose to "append images" or "replace images"

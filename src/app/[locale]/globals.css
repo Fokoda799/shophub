@@ -106,3 +106,7 @@ html {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+button {
+  cursor: pointer;
+} 

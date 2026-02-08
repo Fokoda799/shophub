@@ -64,7 +64,7 @@ export default function CheckoutPage() {
         subtotal,
         shipping,
         tax,
-        total,
+        totalAmount: total,
         orderDate: new Date().toISOString(),
       };
 
@@ -84,8 +84,21 @@ export default function CheckoutPage() {
 
         // Redirect to success page
         router.push(withLocalePath("/order-success", locale));
-      } else {
-        alert(t.order_failed);
+      } else {b
+        let message = t.order_failed;
+        try {
+          const errorPayload = await response.json();
+          if (errorPayload?.error) {
+            message = String(errorPayload.error);
+          }
+          console.error("Order API error:", {
+            status: response.status,
+            body: errorPayload,
+          });
+        } catch (parseError) {
+          console.error("Order API error: failed to parse response", parseError);
+        }
+        alert(message);
       }
     } catch (error) {
       console.error("Order error:", error);
@@ -320,7 +333,7 @@ export default function CheckoutPage() {
 
                   return (
                     <div key={item.productId} className="flex gap-4">
-                      <div className="h-16 w-16 flex-shrink-0 border border-gray-200 bg-gray-50">
+                      <div className="h-16 w-16  relative overflow-hidden shrink-0 border border-gray-200 bg-gray-50">
                         {imageUrl && (
                           <Image
                             src={imageUrl}
